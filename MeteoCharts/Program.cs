@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MeteoCharts.Data;
 using MeteoCharts.Enums;
+using MeteoCharts.Charts;
 
 namespace MeteoCharts
 {
@@ -17,6 +18,8 @@ namespace MeteoCharts
 
 			var rainfallChartData = GetRainfallChartData();
 			var temperatureChartData = GetTemperatureChartData();
+
+            TemperatureChart.GenerateChart();
 		}
 
 		private static RainfallChartData GetRainfallChartData()
