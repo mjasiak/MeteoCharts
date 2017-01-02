@@ -65,6 +65,10 @@ namespace MeteoCharts.Charts
             }
             return canvas;
         }
+        public void DrawChartHours()
+        {
+
+        }
 
         private float SetChartHeight(float height)
         {
