@@ -26,7 +26,7 @@ namespace MeteoCharts.Charts
 
         public void MathChart()
         {
-            ChartRangeSetting();
+            _chartSetting = SetChartRange(_chartSetting, );
         }
 
         public void DrawChart(int canvasWidth, int canvasHeight)
@@ -48,15 +48,22 @@ namespace MeteoCharts.Charts
             }
         }
 
-        public void ChartRangeSetting(IEnumerable<int> values)
+        public ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values)
         {
-            _chartSetting.min = values.First();
-            _chartSetting.max = values.First();
+            int min = values.First();
+            int max = values.First();
             foreach(var value in values)
             {
-                if (_chartSetting.min > value) _chartSetting.min = value;
-                if (_chartSetting.max < value) _chartSetting.max = value;
+                if (min > value) min = value;
+                if (max < value) max = value;
             }
+
+            chartSetting.min = min;
+            chartSetting.max = max;
+
+            if(max<0 && min < 0) chartSetting.valuesRange = (max*-1) - (min*-1);
+
+            return chartSetting;
         }
         public void MathChartAxis()
         {

@@ -1,4 +1,5 @@
-﻿using MeteoCharts.Data;
+﻿using MeteoCharts.Charts.ChartObjects;
+using MeteoCharts.Data;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,6 @@ namespace MeteoCharts.Interfaces
         void GenerateChart();
         void MathChart();
         void DrawChart(int canvasWidth, int canvasHeight);
-        void ChartRangeSetting(IEnumerable<int> values);
+        void ChartRangeSetting(ChartRangeSetting chartRangeSetting, IEnumerable<int> values);,
     }
 }
