@@ -10,13 +10,17 @@ namespace MeteoCharts.Charts
 {
     public class RainfallChart : IChartable
     {
-        public void GenerateChart(int nowy, int stary)
+        public void GenerateChart()
         {
 
         }
-        public SKCanvas DrawChartAxis(SKCanvas canvas, SKPaint paint, int canvasHeight, int canvasWidth)
+        public void MathChart()
         {
-            return canvas;
+
+        }
+        public void DrawChart(int nowy, int stary)
+        {
+
         }
     }
 }

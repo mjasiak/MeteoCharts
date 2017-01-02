@@ -10,7 +10,8 @@ namespace MeteoCharts.Interfaces
 {
     public interface IChartable
     {
-        void GenerateChart(int canvasWidth, int canvasHeight);
-        SKCanvas DrawChartAxis(SKCanvas canvas, SKPaint paint, int canvasHeight, int canvasWidth);
+        void GenerateChart();
+        void MathChart();
+        void DrawChart(int canvasWidth, int canvasHeight);
     }
 }

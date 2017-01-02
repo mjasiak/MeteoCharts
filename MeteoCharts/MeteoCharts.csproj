@@ -89,12 +89,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Charts\ChartObjects\ChartObject.cs" />
+    <Compile Include="Charts\ChartObjects\TemperatureObject.cs" />
     <Compile Include="Charts\RainfallChart.cs" />
     <Compile Include="Charts\TemperatureChart.cs" />
-    <Compile Include="Data\MinMaxValues.cs" />
     <Compile Include="Interfaces\IChartable.cs" />
     <Compile Include="Interfaces\IRenderable.cs" />
-    <Compile Include="NinjectConsole\ChartNinject.cs" />
     <Compile Include="NinjectConsole\NinjectBindings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

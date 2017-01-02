@@ -1,4 +1,5 @@
-﻿using MeteoCharts.Data;
+﻿using MeteoCharts.Charts.ChartObjects;
+using MeteoCharts.Data;
 using MeteoCharts.Enums;
 using MeteoCharts.Interfaces;
 using MeteoCharts.Render;
@@ -16,16 +17,17 @@ namespace MeteoCharts.Charts
     public class TemperatureChart : IChartable
     {
         private TemperatureChartData _tempChartData;
-        private MinMaxValues _minmax = new MinMaxValues();
 
-        public TemperatureChart(TemperatureChartData tempChartData)
+        public void GenerateChart()
         {
-            _tempChartData = tempChartData;
         }
 
-        public void GenerateChart(int canvasWidth, int canvasHeight)
+        public void MathChart()
+        {          
+        }
+
+        public void DrawChart(int canvasWidth, int canvasHeight)
         {
-            _minmax.SetToDrawLeftColumn();
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
@@ -37,7 +39,7 @@ namespace MeteoCharts.Charts
                     paint.Color = new SKColor(208, 208, 208);
                     paint.StrokeCap = SKStrokeCap.Round;
 
-                    canvas = DrawChartAxis( canvas, paint, canvasHeight, canvasWidth);
+                    canvas = DrawChartAxis(canvas, paint, canvasHeight, canvasWidth);
                 }
                 ImageRender.Render(surface);
             }
@@ -45,7 +47,7 @@ namespace MeteoCharts.Charts
 
         public SKCanvas DrawChartAxis(SKCanvas canvas, SKPaint paint, int canvasHeight, int canvasWidth)
         {
-            SKPaint paint2 = new SKPaint();
+            /* SKPaint paint2 = new SKPaint();
             paint2.TextSize = 18.0f;
             paint2.IsAntialias = true;
             paint2.Color = new SKColor(62, 60, 63);
@@ -62,7 +64,7 @@ namespace MeteoCharts.Charts
                 canvas.DrawText(value.ToString(), 0, rowHeight + 5, paint2);
                 value -= 10;
                 row -= 10;
-            }
+            } */
             return canvas;
         }
         public void DrawChartHours()
