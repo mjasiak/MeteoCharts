@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using MeteoCharts.Data;
 using MeteoCharts.Enums;
 using MeteoCharts.Charts;
+using Ninject;
+using MeteoCharts.Interfaces;
+using System.Reflection;
+using MeteoCharts.NinjectConsole;
 
 namespace MeteoCharts
 {
@@ -14,12 +18,19 @@ namespace MeteoCharts
 
 		private static void Main()
 		{
+            StandardKernel ninjectKernel = new StandardKernel();
+            ninjectKernel.Load(Assembly.GetExecutingAssembly());
+
+            IChartable _ichart = ninjectKernel.Get<IChartable>();
+
+            Chart _chart = new Chart(_ichart);
+
 			_timeOfToday = new TimeSpan(0, DateTime.Now.Hour, 0, 0);
 
 			var rainfallChartData = GetRainfallChartData();
 			var temperatureChartData = GetTemperatureChartData();
 
-            TemperatureChart.GenerateChart();
+            _chart.GenerateChart();
 		}
 
 		private static RainfallChartData GetRainfallChartData()

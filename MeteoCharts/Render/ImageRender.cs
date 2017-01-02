@@ -12,7 +12,7 @@ namespace MeteoCharts.Render
     {
         public static void Render(SKSurface surface)
         {
-            Stream imageStream = File.OpenWrite("C:/Image.png");
+            Stream imageStream = File.OpenWrite("C:/Users/mjasiak/Desktop");
             SKImage image = surface.Snapshot();
             SKData data = image.Encode();
             data.SaveTo(imageStream);
