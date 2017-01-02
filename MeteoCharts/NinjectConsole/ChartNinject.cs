@@ -1,4 +1,5 @@
-﻿using MeteoCharts.Interfaces;
+﻿using MeteoCharts.Data;
+using MeteoCharts.Interfaces;
 using MeteoCharts.NinjectConsole;
 using System;
 using System.Collections.Generic;
@@ -8,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace MeteoCharts.NinjectConsole
 {
-    public class Chart
+    public class ChartNinject
     {
         private IChartable _chart;
 
-        public Chart(IChartable chart)
+        public ChartNinject(IChartable chart)
         {
             _chart = chart;
         }
 
-        public void GenerateChart()
+        public void GenerateChart(MinMaxValues minmax)
         {
-            _chart.GenerateChart();
+            _chart.GenerateChart(minmax);
         }
     }
 }

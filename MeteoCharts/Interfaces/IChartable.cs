@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MeteoCharts.Data;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,7 @@ namespace MeteoCharts.Interfaces
 {
     public interface IChartable
     {
-        void GenerateChart();
+        void GenerateChart(int canvasWidth, int canvasHeight);
+        SKCanvas DrawChartAxis(SKCanvas canvas, SKPaint paint, int canvasHeight, int canvasWidth);
     }
 }

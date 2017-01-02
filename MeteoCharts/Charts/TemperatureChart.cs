@@ -1,4 +1,6 @@
-﻿using MeteoCharts.Interfaces;
+﻿using MeteoCharts.Data;
+using MeteoCharts.Enums;
+using MeteoCharts.Interfaces;
 using MeteoCharts.Render;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
@@ -13,28 +15,73 @@ namespace MeteoCharts.Charts
 {
     public class TemperatureChart : IChartable
     {
-        public void GenerateChart()
+        private TemperatureChartData _tempChartData;
+        private MinMaxValues _minmax = new MinMaxValues();
+
+        public TemperatureChart(TemperatureChartData tempChartData)
         {
-            using (var surface = SKSurface.Create(640, 480, SKColorType.Rgb565, SKAlphaType.Premul))
+            _tempChartData = tempChartData;
+        }
+
+        public void GenerateChart(int canvasWidth, int canvasHeight)
+        {
+            _minmax.SetToDrawLeftColumn();
+            using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
-
-                // clear the canvas / fill with white
                 canvas.Clear(SKColors.White);
 
-                // set up drawing tools
                 using (var paint = new SKPaint())
                 {
                     paint.IsAntialias = true;
-                    paint.Color = new SKColor(0x2c, 0x3e, 0x50);
+                    paint.Color = new SKColor(208, 208, 208);
                     paint.StrokeCap = SKStrokeCap.Round;
 
-                        // draw the Xamagon line
-                    canvas.DrawLine(0,10,10,20, paint);
+                    canvas = DrawChartAxis( canvas, paint, canvasHeight, canvasWidth);
                 }
-                    ImageRender.Render(surface);
-                }
+                ImageRender.Render(surface);
             }
+        }
+
+        public SKCanvas DrawChartAxis(SKCanvas canvas, SKPaint paint, int canvasHeight, int canvasWidth)
+        {
+            SKPaint paint2 = new SKPaint();
+            paint2.TextSize = 18.0f;
+            paint2.IsAntialias = true;
+            paint2.Color = new SKColor(62, 60, 63);
+            paint2.IsStroke = false;
+
+            float height = SetChartHeight(canvasHeight);
+            float oneInScale = height / _minmax.valuesCollectionCount;
+            int row = _minmax.valuesCollectionCount;
+            float value = _minmax.max;
+            while (row >= 0)
+            {
+                float rowHeight = height - (row * oneInScale);
+                canvas.DrawLine(0, rowHeight, canvasWidth, rowHeight, paint);
+                canvas.DrawText(value.ToString(), 0, rowHeight + 5, paint2);
+                value -= 10;
+                row -= 10;
+            }
+            return canvas;
+        }
+
+        private float SetChartHeight(float height)
+        {
+            return height * 0.8f;
+        }
+        private float SetIconsHeight(float height)
+        {
+            return height * 0.2f;
+        }
+
+        private void SetMinMax()
+        {
+            foreach (var value in _tempChartData.TemperatureChartDataItems)
+            {
+                _minmax.SetMinMax(value.Value);
+            }
+        }
     }
 }
     
