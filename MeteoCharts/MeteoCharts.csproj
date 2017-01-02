@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Charts\ChartObjects\ChartObject.cs" />
+    <Compile Include="Charts\ChartObjects\ChartRangeSetting.cs" />
     <Compile Include="Charts\ChartObjects\TemperatureObject.cs" />
     <Compile Include="Charts\RainfallChart.cs" />
     <Compile Include="Charts\TemperatureChart.cs" />

@@ -13,5 +13,6 @@ namespace MeteoCharts.Interfaces
         void GenerateChart();
         void MathChart();
         void DrawChart(int canvasWidth, int canvasHeight);
+        void ChartRangeSetting(IEnumerable<int> values);
     }
 }

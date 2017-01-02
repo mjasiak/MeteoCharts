@@ -17,13 +17,16 @@ namespace MeteoCharts.Charts
     public class TemperatureChart : IChartable
     {
         private TemperatureChartData _tempChartData;
+        private List<TemperatureObject> _tempChartObjects = new List<TemperatureObject>();
+        private ChartRangeSetting _chartSetting = new ChartRangeSetting();
 
         public void GenerateChart()
         {
         }
 
         public void MathChart()
-        {          
+        {
+            ChartRangeSetting();
         }
 
         public void DrawChart(int canvasWidth, int canvasHeight)
@@ -43,6 +46,31 @@ namespace MeteoCharts.Charts
                 }
                 ImageRender.Render(surface);
             }
+        }
+
+        public void ChartRangeSetting(IEnumerable<int> values)
+        {
+            _chartSetting.min = values.First();
+            _chartSetting.max = values.First();
+            foreach(var value in values)
+            {
+                if (_chartSetting.min > value) _chartSetting.min = value;
+                if (_chartSetting.max < value) _chartSetting.max = value;
+            }
+        }
+        public void MathChartAxis()
+        {
+            float height = SetChartHeight(canvasHeight);
+            float oneInScale = height / _minmax.valuesCollectionCount;
+            int row = _minmax.valuesCollectionCount;
+            float value = _minmax.max;
+            while (row >= 0)
+            {
+                float rowHeight = height - (row * oneInScale);
+                value -= 10;
+                row -= 10;
+            }
+            */
         }
 
         public SKCanvas DrawChartAxis(SKCanvas canvas, SKPaint paint, int canvasHeight, int canvasWidth)
@@ -79,15 +107,7 @@ namespace MeteoCharts.Charts
         private float SetIconsHeight(float height)
         {
             return height * 0.2f;
-        }
-
-        private void SetMinMax()
-        {
-            foreach (var value in _tempChartData.TemperatureChartDataItems)
-            {
-                _minmax.SetMinMax(value.Value);
-            }
-        }
+        }     
     }
 }
     

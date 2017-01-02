@@ -23,9 +23,7 @@ namespace MeteoCharts
 			var rainfallChartData = GetRainfallChartData();
 			var temperatureChartData = GetTemperatureChartData();
 
-            TemperatureChart tempChart = new TemperatureChart(temperatureChartData);
-
-            tempChart.PrepareData();
+            TemperatureChart tempChart = new TemperatureChart();
 		}
 
 		private static RainfallChartData GetRainfallChartData()
