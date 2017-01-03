@@ -108,6 +108,7 @@ namespace MeteoCharts.Charts
             paint2.IsAntialias = true;
             paint2.Color = new SKColor(62, 60, 63);
             paint2.IsStroke = false;
+            paint2.TextAlign = SKTextAlign.Right;
             #endregion
             foreach (var axis in _chartAxis)
             {
@@ -120,8 +121,8 @@ namespace MeteoCharts.Charts
                     paint.Color = new SKColor(125, 127, 126);
                     paint.StrokeWidth = 2;
                 }
-                canvas.DrawLine(axis.x0, axis.y0, axis.x1, axis.y1, paint);
-                canvas.DrawText(axis.value.ToString(), axis.x0, axis.y0 + 5, paint2);
+                canvas.DrawLine(axis.x0 + 40, axis.y0, axis.x1 + 40, axis.y1, paint);
+                canvas.DrawText(axis.value.ToString(), axis.x0 + 30, axis.y0 + 5, paint2);
             }
             return canvas;
         }
@@ -132,11 +133,12 @@ namespace MeteoCharts.Charts
 
             foreach (var obj in _chartObjects)
             {
+                obj.x = obj.x + 75;
                 paint.Color = new SKColor(0, 0, 0);
                 canvas.DrawCircle(obj.x, obj.y, 8,paint);                
                 paint.TextSize = 32.0f;
                 paint.TextAlign = SKTextAlign.Center;
-                canvas.DrawText(obj.value.ToString() + "°", obj.x, obj.y - 20, paint);
+                canvas.DrawText(obj.value.ToString() + "°", obj.x, obj.y - 30, paint);
                 paint.StrokeCap = SKStrokeCap.Round;
                 canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis,paint);
                 paint.Color = new SKColor(254, 254, 254);
@@ -147,6 +149,11 @@ namespace MeteoCharts.Charts
                 if(_chartObjects[0] == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
                 else canvas.DrawText(obj.hour.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
             }
+            return canvas;
+        }
+        private SKCanvas DrawChartBezier(SKCanvas canvas)
+        {
+
             return canvas;
         }
 
