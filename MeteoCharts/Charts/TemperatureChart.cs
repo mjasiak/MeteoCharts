@@ -115,6 +115,11 @@ namespace MeteoCharts.Charts
         {
             return height * 0.2f;
         }     
+
+        private IEnumerable<int> GetValues()
+        {
+
+        }
     }
 }
     
