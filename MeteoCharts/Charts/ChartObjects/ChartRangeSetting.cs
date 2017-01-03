@@ -19,7 +19,6 @@ namespace MeteoCharts.Charts.ChartObjects
         public float oneInScale { get; set; }
 
         public float heightOfAxis { get; set; }
-        public float heightOfIcons { get; set; }
 
         public void setInScale(int min, int max)
         {

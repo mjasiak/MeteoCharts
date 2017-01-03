@@ -17,13 +17,13 @@ namespace MeteoCharts.Charts
     public class TemperatureChart : IChartable
     {
         private TemperatureChartData _tempChartData;
+        private List<TemperatureObject> _tempObjects = new List<TemperatureObject>();
         private ChartRangeSetting _chartSetting = new ChartRangeSetting();
         private List<ChartAxis> _chartAxis = new List<ChartAxis>();
-        private List<ChartObject> _chartObjects = new List<ChartObject>();
 
         public TemperatureChart(TemperatureChartData tempChartData)
         {
-            _tempChartData = tempChartData;            
+            _tempChartData = tempChartData;                
         }
 
         public void DrawChart(int canvasWidth, int canvasHeight)
@@ -44,8 +44,8 @@ namespace MeteoCharts.Charts
         {
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
             MathChartAxis(_chartSetting, canvasWidth, canvasHeight);
-            GetTemperatureObjects();
-            MathChartValues(_chartObjects);
+            GetObjects();
+            MathChartValues();         
         }
 
         private ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values, int canvasHeight)
@@ -60,13 +60,11 @@ namespace MeteoCharts.Charts
 
             chartSetting.min = min;
             chartSetting.max = max;
-            chartSetting.setInScale(min, max);
 
+            chartSetting.setInScale(min, max);
             chartSetting.heightOfAxis = SetChartHeight(canvasHeight);
-            chartSetting.heightOfIcons = SetIconsHeight(canvasHeight);
 
             chartSetting.oneInScale = chartSetting.heightOfAxis / chartSetting.valuesRangeInScale;
-
             return chartSetting;
         }
 
@@ -84,16 +82,22 @@ namespace MeteoCharts.Charts
                 _chartAxis.Add(axis);
             }            
         }
-        private void MathChartValues(List<ChartObject> chartObjects)
+        private void MathChartValue(ChartObject chartObject, int spaceBetween)
+        {          
+                chartObject.x = spaceBetween;
+                chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject);
+        }
+        #region MathHelper
+        private void MathChartValues()
         {
             int space = 0;
-            foreach (var chartObj in chartObjects)
-            {               
-                chartObj.x = space;
-                chartObj.y = GetHeightOfValueInPixels(_chartSetting, chartObj);
+            foreach (var chartObj in _tempObjects)
+            {
+                MathChartValue(chartObj, space);
                 space += 200;
             }
         }
+        #endregion
 
         private SKCanvas DrawChartAxis(SKCanvas canvas)
         {
@@ -131,7 +135,7 @@ namespace MeteoCharts.Charts
             SKPaint paint = new SKPaint();
             paint.Color = new SKColor(0, 0, 0);
 
-            foreach (var obj in _chartObjects)
+            foreach (var obj in _tempObjects)
             {
                 obj.x = obj.x + 75;
                 paint.Color = new SKColor(0, 0, 0);
@@ -146,24 +150,36 @@ namespace MeteoCharts.Charts
                 paint.Color = new SKColor(0, 0, 0);
                 paint.TextSize = 18.0f;
                 paint.TextAlign = SKTextAlign.Center;
-                if(_chartObjects[0] == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
+                if(_tempObjects[0] == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
                 else canvas.DrawText(obj.hour.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
             }
             return canvas;
         }
         private SKCanvas DrawChartBezier(SKCanvas canvas)
         {
+            SKPaint paint = new SKPaint();
+            paint.Color = new SKColor(0, 0, 0);
+            paint.IsAntialias = true;
+            paint.StrokeWidth = 8;
+            paint.Style = SKPaintStyle.Stroke;
 
+            TemperatureObject previousObj= _tempObjects[0];
+            for(int i = 1; i <= _tempObjects.Count()-1; i++)
+            {
+                SKPath path = new SKPath();
+                TemperatureObject nextObj = _tempObjects[i];
+                path.MoveTo(previousObj.x, previousObj.y);
+                if (previousObj.value > nextObj.value) path.QuadTo(nextObj.x-(nextObj.x-previousObj.x),previousObj.y,nextObj.x,nextObj.y);
+                else path.QuadTo(nextObj.x - (nextObj.x - previousObj.x), nextObj.y, nextObj.x, nextObj.y);
+                canvas.DrawPath(path, paint);
+                previousObj = _tempObjects[i];
+            }
             return canvas;
         }
 
         private float SetChartHeight(float height)
         {
             return height * 0.8f;
-        }
-        private float SetIconsHeight(float height)
-        {
-            return height * 0.2f;
         }
 
         private IEnumerable<int> GetValues()
@@ -175,7 +191,7 @@ namespace MeteoCharts.Charts
             }
             return values;
         }
-        private void GetTemperatureObjects()
+        private void GetObjects()
         {
             foreach(var item in _tempChartData.TemperatureChartDataItems)
             {
@@ -183,7 +199,7 @@ namespace MeteoCharts.Charts
                 tempObj.hour = item.Time;
                 tempObj.icon = item.IconType;
                 tempObj.value = item.Value;
-                _chartObjects.Add(tempObj);
+                _tempObjects.Add(tempObj);
             }
         }
         private float GetHeightOfValueInPixels(ChartRangeSetting chartSett, ChartObject chartObj)
