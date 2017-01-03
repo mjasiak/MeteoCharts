@@ -11,10 +11,6 @@ namespace MeteoCharts.Interfaces
 {
     public interface IChartable
     {
-        void GenerateChart();
-        void MathChart();
         void DrawChart(int canvasWidth, int canvasHeight);
-        void ChartRangeSetting(ChartRangeSetting chartRangeSetting, IEnumerable<int> values);
-        IEnumerable<int> GetValues();
     }
 }

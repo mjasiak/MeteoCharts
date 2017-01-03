@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using MeteoCharts.Enums;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace MeteoCharts.Charts.ChartObjects
     public class TemperatureObject : ChartObject
     {
         public SKColor color { get; set; }
+        public WeatherIconType icon { get; set; }
     }
 }

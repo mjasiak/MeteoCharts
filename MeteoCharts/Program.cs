@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using MeteoCharts.Data;
 using MeteoCharts.Enums;
 using MeteoCharts.Charts;
-using Ninject;
 using MeteoCharts.Interfaces;
 using System.Reflection;
-using MeteoCharts.NinjectConsole;
 
 namespace MeteoCharts
 {
 	internal class Program
 	{
 		private static readonly uint[] RainfallValues = { 30, 36, 5, 3, 0, 28 };
-		private static readonly int[] TemperatureValues = { 28, 19, -1, 2, -5, -11 };
+		private static readonly int[] TemperatureValues = {28, 19, -1, -2, 5, -11 };
         private static TimeSpan _timeOfToday;
 
 		private static void Main()
@@ -23,7 +21,8 @@ namespace MeteoCharts
 			var rainfallChartData = GetRainfallChartData();
 			var temperatureChartData = GetTemperatureChartData();
 
-            TemperatureChart tempChart = new TemperatureChart();
+            TemperatureChart tempChart = new TemperatureChart(temperatureChartData);
+            tempChart.DrawChart(1280, 720);
 		}
 
 		private static RainfallChartData GetRainfallChartData()

@@ -8,8 +8,8 @@ namespace MeteoCharts.Charts.ChartObjects
 {
     public class ChartObject
     {
-        public int x { get; set; }
-        public int y { get; set; }
+        public float x { get; set; }
+        public float y { get; set; }
 
         public int value { get; set; }
         public TimeSpan hour { get; set; }

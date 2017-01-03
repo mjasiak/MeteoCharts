@@ -1,4 +1,5 @@
-﻿using MeteoCharts.Interfaces;
+﻿using MeteoCharts.Charts.ChartObjects;
+using MeteoCharts.Interfaces;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,14 @@ namespace MeteoCharts.Charts
         public void DrawChart(int nowy, int stary)
         {
 
+        }
+        public IEnumerable<int> GetValues()
+        {           
+            return new List<int>();
+        }
+        public ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values)
+        {
+            return chartSetting;
         }
     }
 }
