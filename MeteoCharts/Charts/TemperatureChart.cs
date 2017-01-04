@@ -20,15 +20,16 @@ namespace MeteoCharts.Charts
         private List<TemperatureObject> _tempObjects = new List<TemperatureObject>();
         private ChartRangeSetting _chartSetting = new ChartRangeSetting();
         private List<ChartAxis> _chartAxis = new List<ChartAxis>();
+        private int canvasWidth;
 
         public TemperatureChart(TemperatureChartData tempChartData)
         {
             _tempChartData = tempChartData;                
         }
 
-        public void DrawChart(int canvasWidth, int canvasHeight, int spaceBetweenValues)
+        public void DrawChart(int canvasHeight, int spaceBetweenValues)
         {
-            MathChart(canvasWidth,canvasHeight, spaceBetweenValues);
+            MathChart(canvasHeight, spaceBetweenValues);
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
@@ -41,10 +42,11 @@ namespace MeteoCharts.Charts
                 ImageRender.Render(surface);
             }
         }
-        private void MathChart(int canvasWidth, int canvasHeight, int spaceBetween)
+        private void MathChart(int canvasHeight, int spaceBetween)
         {
+            canvasWidth = _tempChartData.TemperatureChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
-            MathChartAxis(_chartSetting, canvasWidth, canvasHeight);
+            MathChartAxis(_chartSetting, canvasHeight);
             GetObjects();
             MathChartValues(spaceBetween);         
         }
@@ -69,7 +71,7 @@ namespace MeteoCharts.Charts
             return chartSetting;
         }
 
-        private void MathChartAxis(ChartRangeSetting chartSetting, int canvasWidth, int canvasHeight)
+        private void MathChartAxis(ChartRangeSetting chartSetting, int canvasHeight)
         {
             float height = SetChartHeight(canvasHeight);
             int row = chartSetting.valuesRangeInScale;

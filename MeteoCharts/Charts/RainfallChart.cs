@@ -19,7 +19,7 @@ namespace MeteoCharts.Charts
         {
 
         }
-        public void DrawChart(int nowy, int stary, int spaceBetween)
+        public void DrawChart(int nowy, int spaceBetween)
         {
 
         }

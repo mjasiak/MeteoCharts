@@ -22,7 +22,7 @@ namespace MeteoCharts
 			var temperatureChartData = GetTemperatureChartData();
 
             TemperatureChart tempChart = new TemperatureChart(temperatureChartData);
-            tempChart.DrawChart(1280, 720, 200);
+            tempChart.DrawChart(720, 200);
 		}
 
 		private static RainfallChartData GetRainfallChartData()
