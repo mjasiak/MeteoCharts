@@ -11,7 +11,7 @@ namespace MeteoCharts
 	internal class Program
 	{
 		private static readonly uint[] RainfallValues = { 30, 36, 5, 3, 0, 28 };
-		private static readonly int[] TemperatureValues = {28, 19, -1, -2, 5, -11 };
+		private static readonly int[] TemperatureValues = {28, 19, -1, 2, -5, -11 };
         private static TimeSpan _timeOfToday;
 
 		private static void Main()
@@ -22,7 +22,7 @@ namespace MeteoCharts
 			var temperatureChartData = GetTemperatureChartData();
 
             TemperatureChart tempChart = new TemperatureChart(temperatureChartData);
-            tempChart.DrawChart(1280, 720);
+            tempChart.DrawChart(1280, 720, 200);
 		}
 
 		private static RainfallChartData GetRainfallChartData()

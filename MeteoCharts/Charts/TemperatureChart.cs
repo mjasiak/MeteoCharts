@@ -26,26 +26,27 @@ namespace MeteoCharts.Charts
             _tempChartData = tempChartData;                
         }
 
-        public void DrawChart(int canvasWidth, int canvasHeight)
+        public void DrawChart(int canvasWidth, int canvasHeight, int spaceBetweenValues)
         {
-            MathChart(canvasWidth,canvasHeight);
+            MathChart(canvasWidth,canvasHeight, spaceBetweenValues);
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
                 canvas.Clear(SKColors.White);  
                                   
                 canvas = DrawChartAxis(canvas);
+                canvas = DrawChartBezier(canvas,spaceBetweenValues);
                 canvas = DrawChartValues(canvas);
                 
                 ImageRender.Render(surface);
             }
         }
-        private void MathChart(int canvasWidth, int canvasHeight)
+        private void MathChart(int canvasWidth, int canvasHeight, int spaceBetween)
         {
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
             MathChartAxis(_chartSetting, canvasWidth, canvasHeight);
             GetObjects();
-            MathChartValues();         
+            MathChartValues(spaceBetween);         
         }
 
         private ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values, int canvasHeight)
@@ -88,13 +89,13 @@ namespace MeteoCharts.Charts
                 chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject);
         }
         #region MathHelper
-        private void MathChartValues()
+        private void MathChartValues(int spaceBetween)
         {
             int space = 0;
             foreach (var chartObj in _tempObjects)
             {
                 MathChartValue(chartObj, space);
-                space += 200;
+                space += spaceBetween;
             }
         }
         #endregion
@@ -137,7 +138,7 @@ namespace MeteoCharts.Charts
 
             foreach (var obj in _tempObjects)
             {
-                obj.x = obj.x + 75;
+                //obj.x = obj.x + 75;
                 paint.Color = new SKColor(0, 0, 0);
                 canvas.DrawCircle(obj.x, obj.y, 8,paint);                
                 paint.TextSize = 32.0f;
@@ -155,25 +156,28 @@ namespace MeteoCharts.Charts
             }
             return canvas;
         }
-        private SKCanvas DrawChartBezier(SKCanvas canvas)
+        private SKCanvas DrawChartBezier(SKCanvas canvas, int spaceBetweenValues)
         {
+            SKPath path = new SKPath();
             SKPaint paint = new SKPaint();
             paint.Color = new SKColor(0, 0, 0);
             paint.IsAntialias = true;
-            paint.StrokeWidth = 8;
+            paint.StrokeWidth = 4;
             paint.Style = SKPaintStyle.Stroke;
 
-            TemperatureObject previousObj= _tempObjects[0];
-            for(int i = 1; i <= _tempObjects.Count()-1; i++)
-            {
-                SKPath path = new SKPath();
+            spaceBetweenValues /= 2;
+
+            TemperatureObject previousObj= _tempObjects[0];           
+            path.MoveTo(previousObj.x, previousObj.y);
+
+            for (int i = 1; i <= _tempObjects.Count()-1; i++)
+            {               
                 TemperatureObject nextObj = _tempObjects[i];
-                path.MoveTo(previousObj.x, previousObj.y);
-                if (previousObj.value > nextObj.value) path.QuadTo(nextObj.x-(nextObj.x-previousObj.x),previousObj.y,nextObj.x,nextObj.y);
-                else path.QuadTo(nextObj.x - (nextObj.x - previousObj.x), nextObj.y, nextObj.x, nextObj.y);
+                float halfRoad = nextObj.x - ((nextObj.x - previousObj.x) / 2);
+                path.CubicTo(previousObj.x+spaceBetweenValues,previousObj.y,nextObj.x-spaceBetweenValues,nextObj.y,nextObj.x,nextObj.y);
                 canvas.DrawPath(path, paint);
                 previousObj = _tempObjects[i];
-            }
+            } 
             return canvas;
         }
 
