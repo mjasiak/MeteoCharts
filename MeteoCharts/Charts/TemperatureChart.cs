@@ -39,7 +39,7 @@ namespace MeteoCharts.Charts
                 canvas = DrawChartBezier(canvas,spaceBetweenValues);
                 canvas = DrawChartValues(canvas);
                 
-                ImageRender.Render(surface);
+                ImageRender.Render(surface, "C:/Image.png");
             }
         }
         private void MathChart(int canvasHeight, int spaceBetween)
@@ -205,6 +205,7 @@ namespace MeteoCharts.Charts
                 tempObj.hour = item.Time;
                 tempObj.icon = item.IconType;
                 tempObj.value = item.Value;
+                tempObj.color = new SKColor();
                 _tempObjects.Add(tempObj);
             }
         }

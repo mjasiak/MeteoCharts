@@ -10,9 +10,9 @@ namespace MeteoCharts.Render
 {
     public class ImageRender
     {
-        public static void Render(SKSurface surface)
+        public static void Render(SKSurface surface, string saveFilePath)
         {
-            Stream imageStream = File.OpenWrite("C:/Image.png");
+            Stream imageStream = File.OpenWrite(saveFilePath);
             SKImage image = surface.Snapshot();
             SKData data = image.Encode();
             data.SaveTo(imageStream);
