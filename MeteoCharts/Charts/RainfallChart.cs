@@ -28,6 +28,7 @@ namespace MeteoCharts.Charts
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
             MathChartAxis(_chartSetting, canvasHeight);
         }
+
         private IEnumerable<int> GetValues()
         {
             List<int> values = new List<int>();
