@@ -1,4 +1,5 @@
 ﻿using MeteoCharts.Charts.ChartObjects;
+using MeteoCharts.Data;
 using MeteoCharts.Interfaces;
 using SkiaSharp;
 using System;
@@ -9,23 +10,32 @@ using System.Threading.Tasks;
 
 namespace MeteoCharts.Charts
 {
-    public class RainfallChart : IChartable
+    public class RainfallChart : Chart, IChartable
     {
-        public void GenerateChart()
+        private RainfallChartData _rainChartData;
+        public RainfallChart(RainfallChartData rainChartData)
         {
-
+            _rainChartData = rainChartData;
         }
-        public void MathChart()
+      
+        public void DrawChart(int canvasHeight, int spaceBetween, string pathFileSave)
         {
-
+            MathChart(canvasHeight, spaceBetween);
         }
-        public void DrawChart(int nowy, int spaceBetween)
+        public void MathChart(int canvasHeight, int spaceBetween)
         {
-
+            canvasWidth = _rainChartData.RainfallChartDataItems.Count() * spaceBetween;
+            _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
+            MathChartAxis(_chartSetting, canvasHeight);
         }
-        public IEnumerable<int> GetValues()
-        {           
-            return new List<int>();
+        private IEnumerable<int> GetValues()
+        {
+            List<int> values = new List<int>();
+            foreach (var value in _rainChartData.RainfallChartDataItems)
+            {
+                values.Add((Int32)value.Value);
+            }
+            return values;
         }
         public ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values)
         {

@@ -11,6 +11,6 @@ namespace MeteoCharts.Interfaces
 {
     public interface IChartable
     {
-        void DrawChart(int canvasHeight, int spaceBetweenValues);
+        void DrawChart(int canvasHeight, int spaceBetweenValues, string pathFileSave);
     }
 }

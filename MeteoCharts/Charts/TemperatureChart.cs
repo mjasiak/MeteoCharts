@@ -6,6 +6,7 @@ using MeteoCharts.Render;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,22 +15,18 @@ using System.Threading.Tasks;
 
 namespace MeteoCharts.Charts
 {
-    public class TemperatureChart : IChartable
+    public class TemperatureChart : Chart, IChartable
     {
-        private TemperatureChartData _tempChartData;
-        private List<TemperatureObject> _tempObjects = new List<TemperatureObject>();
-        private ChartRangeSetting _chartSetting = new ChartRangeSetting();
-        private List<ChartAxis> _chartAxis = new List<ChartAxis>();
-        private int canvasWidth;
-
+        private TemperatureChartData _tempChartData;      
         public TemperatureChart(TemperatureChartData tempChartData)
         {
             _tempChartData = tempChartData;                
         }
 
-        public void DrawChart(int canvasHeight, int spaceBetweenValues)
+        public void DrawChart(int canvasHeight, int spaceBetweenValues, string pathSaveFile)
         {
-            MathChart(canvasHeight, spaceBetweenValues);
+            this.canvasHeight = canvasHeight;
+            MathChart(spaceBetweenValues);
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
@@ -39,84 +36,35 @@ namespace MeteoCharts.Charts
                 canvas = DrawChartBezier(canvas,spaceBetweenValues);
                 canvas = DrawChartValues(canvas);
                 
-                ImageRender.Render(surface, "C:/Image.png");
+                ImageRender.Render(surface, pathSaveFile);
             }
         }
-        private void MathChart(int canvasHeight, int spaceBetween)
+        private void MathChart(int spaceBetween)
         {
             canvasWidth = _tempChartData.TemperatureChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
+
+            GetValueAndColorOfItem();
+
             MathChartAxis(_chartSetting, canvasHeight);
-            GetObjects();
             MathChartValues(spaceBetween);         
-        }
-
-        private ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values, int canvasHeight)
-        {
-            int min = values.First();
-            int max = values.First();
-            foreach(var value in values)
-            {
-                if (min > value) min = value;
-                if (max < value) max = value;
-            }
-
-            chartSetting.min = min;
-            chartSetting.max = max;
-
-            chartSetting.setInScale(min, max);
-            chartSetting.heightOfAxis = SetChartHeight(canvasHeight);
-
-            chartSetting.oneInScale = chartSetting.heightOfAxis / chartSetting.valuesRangeInScale;
-            return chartSetting;
-        }
-
-        private void MathChartAxis(ChartRangeSetting chartSetting, int canvasHeight)
-        {
-            float height = SetChartHeight(canvasHeight);
-            int row = chartSetting.valuesRangeInScale;
-            int value = chartSetting.maxInScale;
-            while (row >= 0)
-            {
-                float rowHeight = height - (row * chartSetting.oneInScale);
-                ChartAxis axis = new ChartAxis(0, rowHeight, canvasWidth, rowHeight, value);               
-                value -= 10;
-                row -= 10;
-                _chartAxis.Add(axis);
-            }            
-        }
-        private void MathChartValue(ChartObject chartObject, int spaceBetween)
-        {          
-                chartObject.x = spaceBetween;
-                chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject);
-        }
-        #region MathHelper
+        }     
+        
         private void MathChartValues(int spaceBetween)
         {
             int space = 0;
-            foreach (var chartObj in _tempObjects)
+            foreach (var chartObj in _tempChartData.TemperatureChartDataItems)
             {
                 MathChartValue(chartObj, space);
                 space += spaceBetween;
             }
         }
-        #endregion
 
         private SKCanvas DrawChartAxis(SKCanvas canvas)
         {
-            #region Painting
-            SKPaint paint = new SKPaint();
-            paint.IsAntialias = true;
-            paint.Color = new SKColor(208, 208, 208);
-            paint.StrokeCap = SKStrokeCap.Round;
+            SKPaint paint = new SKPaint() { Color = new SKColor(208, 208, 208), IsAntialias = true, StrokeCap = SKStrokeCap.Round };
+            SKPaint paint2 = new SKPaint() { Color = new SKColor(45, 45, 45), IsAntialias = true, TextSize = 30.0f, IsStroke = false, TextAlign = SKTextAlign.Right };
 
-            SKPaint paint2 = new SKPaint();
-            paint2.TextSize = 18.0f;
-            paint2.IsAntialias = true;
-            paint2.Color = new SKColor(62, 60, 63);
-            paint2.IsStroke = false;
-            paint2.TextAlign = SKTextAlign.Right;
-            #endregion
             foreach (var axis in _chartAxis)
             {
                 if (axis.value != 0)
@@ -128,64 +76,76 @@ namespace MeteoCharts.Charts
                     paint.Color = new SKColor(125, 127, 126);
                     paint.StrokeWidth = 2;
                 }
-                canvas.DrawLine(axis.x0 + 40, axis.y0, axis.x1 + 40, axis.y1, paint);
-                canvas.DrawText(axis.value.ToString(), axis.x0 + 30, axis.y0 + 5, paint2);
+                canvas.DrawLine(axis.x0 + (0.08f * canvasHeight), axis.y0, axis.x1 + (0.09f * canvasHeight), axis.y1, paint);
+                canvas.DrawText(axis.value.ToString(), axis.x0 + (0.06f * canvasHeight), axis.y0 + 10, paint2);
             }
             return canvas;
         }
         private SKCanvas DrawChartValues(SKCanvas canvas)
         {
-            SKPaint paint = new SKPaint();
-            paint.Color = new SKColor(0, 0, 0);
+            SKPaint paint = new SKPaint() { Color = new SKColor(0, 0, 0), StrokeCap = SKStrokeCap.Round };
+            SKPaint paintValues = new SKPaint() { Color = new SKColor(20, 20, 20), TextSize = 48.0f, TextAlign = SKTextAlign.Center, IsAntialias = true, FakeBoldText=true };
+            SKPaint paintCircle = new SKPaint() { Color = new SKColor(254, 254, 254) };
+            SKPaint paintHour = new SKPaint() { Color = new SKColor(0, 0, 0), TextSize = 30.0f, TextAlign = SKTextAlign.Center, IsAntialias = true };
 
-            foreach (var obj in _tempObjects)
+            foreach (var obj in _tempChartData.TemperatureChartDataItems)
             {
-                //obj.x = obj.x + 75;
-                paint.Color = new SKColor(0, 0, 0);
-                canvas.DrawCircle(obj.x, obj.y, 8,paint);                
-                paint.TextSize = 32.0f;
-                paint.TextAlign = SKTextAlign.Center;
-                canvas.DrawText(obj.value.ToString() + "°", obj.x, obj.y - 30, paint);
-                paint.StrokeCap = SKStrokeCap.Round;
-                canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis,paint);
-                paint.Color = new SKColor(254, 254, 254);
-                canvas.DrawCircle(obj.x, obj.y, 5, paint);
-                paint.Color = new SKColor(0, 0, 0);
-                paint.TextSize = 18.0f;
-                paint.TextAlign = SKTextAlign.Center;
-                if(_tempObjects[0] == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
-                else canvas.DrawText(obj.hour.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f, paint);
+                canvas.DrawCircle(obj.x, obj.y, 8,paint);                               
+                canvas.DrawText(obj.chartValue.ToString() + "°", obj.x + 7, obj.y - 35, paintValues);
+                canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis+20,paint);
+                canvas.DrawCircle(obj.x, obj.y, 5, paintCircle);
+
+                if(_tempChartData.TemperatureChartDataItems.First() == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f+40, paintHour);
+                else canvas.DrawText(obj.Time.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f+40, paintHour);
             }
             return canvas;
         }
         private SKCanvas DrawChartBezier(SKCanvas canvas, int spaceBetweenValues)
         {
             SKPath path = new SKPath();
-            SKPaint paint = new SKPaint();
-            paint.Color = new SKColor(0, 0, 0);
-            paint.IsAntialias = true;
-            paint.StrokeWidth = 4;
-            paint.Style = SKPaintStyle.Stroke;
+            SKPaint paint = new SKPaint() { Color= new SKColor(0, 0, 0), IsAntialias= true, StrokeWidth = 4, Style=SKPaintStyle.Stroke };
+                                
+            float m = 0;
+            float dx1 = 0;
+            float dy1 = 0;
+            float dx2 = 0;
+            float dy2 = 0;
 
-            spaceBetweenValues /= 2;
+            float f = 0.35f;
+            float t = 0.6f;
 
-            TemperatureObject previousObj= _tempObjects[0];           
-            path.MoveTo(previousObj.x, previousObj.y);
+            TemperatureChartDataItem prevObj = _tempChartData.TemperatureChartDataItems.First();
+            path.MoveTo(prevObj.x, prevObj.y);
+            for (int i = 1; i <= _tempChartData.TemperatureChartDataItems.Count()-2; i++)
+            {              
+                TemperatureChartDataItem currObj = _tempChartData.TemperatureChartDataItems.ToList()[i];
+                TemperatureChartDataItem nextObj = _tempChartData.TemperatureChartDataItems.ToList()[i+1];
+                if(nextObj != null) {
+                    m = gradient(prevObj, nextObj);
+                    dx2 = (nextObj.x - currObj.x) * -f;
+                    dy2 = dx2 * m * t;
+                }
+                else {
+                    dx2 = 0;
+                    dy2 = 0;
+                }
 
-            for (int i = 1; i <= _tempObjects.Count()-1; i++)
-            {               
-                TemperatureObject nextObj = _tempObjects[i];
-                float halfRoad = nextObj.x - ((nextObj.x - previousObj.x) / 2);
-                path.CubicTo(previousObj.x+spaceBetweenValues,previousObj.y,nextObj.x-spaceBetweenValues,nextObj.y,nextObj.x,nextObj.y);
-                canvas.DrawPath(path, paint);
-                previousObj = _tempObjects[i];
-            } 
+                float xc = (prevObj.x + nextObj.x) / 2;
+                float yc = (prevObj.y + nextObj.y) / 2;
+
+                path.CubicTo(prevObj.x - dx1, prevObj.y - dy1, currObj.x + dx2, currObj.y + dy2, currObj.x, currObj.y);
+
+                dx1 = dx2;
+                dy1 = dy2;
+                prevObj = currObj;             
+            }
+            canvas.DrawPath(path, paint);
             return canvas;
         }
 
-        private float SetChartHeight(float height)
+        private float gradient(TemperatureChartDataItem a, TemperatureChartDataItem b)
         {
-            return height * 0.8f;
+            return (b.y - a.y) / (b.x - a.x);
         }
 
         private IEnumerable<int> GetValues()
@@ -197,24 +157,19 @@ namespace MeteoCharts.Charts
             }
             return values;
         }
-        private void GetObjects()
+        private void GetValueAndColorOfItem()
         {
+            TemperatureChartDataItem tempItem = _tempChartData.TemperatureChartDataItems.First();
             foreach(var item in _tempChartData.TemperatureChartDataItems)
             {
-                TemperatureObject tempObj = new TemperatureObject();
-                tempObj.hour = item.Time;
-                tempObj.icon = item.IconType;
-                tempObj.value = item.Value;
-                tempObj.color = new SKColor();
-                _tempObjects.Add(tempObj);
+                if (tempItem.Value > item.Value) tempItem.willFall = true;
+                else if(tempItem.Value < item.Value) tempItem.willClimb = true;
+                item.chartValue = item.Value;
+                item.Color = new SKColor();
+                tempItem = item;
             }
         }
-        private float GetHeightOfValueInPixels(ChartRangeSetting chartSett, ChartObject chartObj)
-        {
-            int minus = chartSett.maxInScale - chartObj.value;
-            int minusInScale = chartSett.valuesRangeInScale - minus;
-            return chartSett.heightOfAxis - (minusInScale * chartSett.oneInScale);
-        }
+
     }
 }
     

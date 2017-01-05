@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace MeteoCharts.Charts.ChartObjects
 {
-    public class ChartObject
+    public class ChartItem
     {
         public float x { get; set; }
         public float y { get; set; }
 
-        public int value { get; set; }
-        public TimeSpan hour { get; set; }
+        public int chartValue { get; set; }
     }
 }

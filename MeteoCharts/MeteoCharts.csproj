@@ -85,10 +85,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Charts\ChartObjects\Chart.cs" />
     <Compile Include="Charts\ChartObjects\ChartAxis.cs" />
-    <Compile Include="Charts\ChartObjects\ChartObject.cs" />
+    <Compile Include="Charts\ChartObjects\ChartItem.cs" />
     <Compile Include="Charts\ChartObjects\ChartRangeSetting.cs" />
-    <Compile Include="Charts\ChartObjects\TemperatureObject.cs" />
     <Compile Include="Charts\RainfallChart.cs" />
     <Compile Include="Charts\TemperatureChart.cs" />
     <Compile Include="Colors\ColorsRepository.cs" />
