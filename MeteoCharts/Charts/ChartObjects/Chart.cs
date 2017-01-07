@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MeteoCharts.Charts.ChartObjects
 {
-    public class Chart
+    public abstract class Chart
     {
         protected ChartRangeSetting _chartSetting = new ChartRangeSetting();
         protected List<ChartAxis> _chartAxis = new List<ChartAxis>();
@@ -31,6 +32,9 @@ namespace MeteoCharts.Charts.ChartObjects
             chartObject.x = spaceBetween + 105;
             chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject) + 20;
         }
+
+        protected abstract SKCanvas DrawChartAxis(SKCanvas canvas);
+        protected abstract void MathChart(int spaceBetween);
 
         protected ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values, int canvasHeight)
         {

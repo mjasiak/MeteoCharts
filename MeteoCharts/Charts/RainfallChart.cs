@@ -1,6 +1,7 @@
 ﻿using MeteoCharts.Charts.ChartObjects;
 using MeteoCharts.Data;
 using MeteoCharts.Interfaces;
+using MeteoCharts.Render;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,28 @@ namespace MeteoCharts.Charts
       
         public void DrawChart(int canvasHeight, int spaceBetween, string pathFileSave)
         {
+            this.canvasHeight = canvasHeight;
             MathChart(canvasHeight, spaceBetween);
+            using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
+            {
+                SKCanvas canvas = surface.Canvas;
+                canvas.Clear(SKColors.White);
+
+                canvas = DrawChartAxis(canvas);
+
+                ImageRender.Render(surface, pathFileSave);
+            }
         }
         public void MathChart(int canvasHeight, int spaceBetween)
         {
             canvasWidth = _rainChartData.RainfallChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
             MathChartAxis(_chartSetting, canvasHeight);
+        }
+
+        protected override SKCanvas DrawChartAxis(SKCanvas canvas)
+        {
+            return canvas;
         }
 
         private IEnumerable<int> GetValues()

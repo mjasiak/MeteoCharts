@@ -40,7 +40,7 @@ namespace MeteoCharts.Charts
                 ImageRender.Render(surface, pathSaveFile);
             }
         }
-        private void MathChart(int spaceBetween)
+        protected override void MathChart(int spaceBetween)
         {
             canvasWidth = _tempChartData.TemperatureChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
@@ -61,7 +61,7 @@ namespace MeteoCharts.Charts
             }
         }
 
-        private SKCanvas DrawChartAxis(SKCanvas canvas)
+        protected override SKCanvas DrawChartAxis(SKCanvas canvas)
         {
             SKPaint paint = new SKPaint() { Color = new SKColor(208, 208, 208), IsAntialias = true, StrokeCap = SKStrokeCap.Round };
             SKPaint paint2 = new SKPaint() { Color = new SKColor(45, 45, 45), IsAntialias = true, TextSize = 30.0f, IsStroke = false, TextAlign = SKTextAlign.Right };
@@ -145,10 +145,6 @@ namespace MeteoCharts.Charts
             return canvas;
         }
 
-        private float gradient(TemperatureChartDataItem a, TemperatureChartDataItem b)
-        {
-            return (b.y - a.y) / (b.x - a.x);
-        }
 
         private IEnumerable<int> GetValues()
         {
@@ -230,18 +226,7 @@ namespace MeteoCharts.Charts
             }
             return new SKColor(r, g, b);
         }
-
-        private double ColorCalc(double c, double t1, double t2)
-        {
-
-            if (c < 0) c += 1d;
-            if (c > 1) c -= 1d;
-            if (6.0d * c < 1.0d) return t1 + (t2 - t1) * 6.0d * c;
-            if (2.0d * c < 1.0d) return t2;
-            if (3.0d * c < 2.0d) return t1 + (t2 - t1) * (2.0d / 3.0d - c) * 6.0d;
-            return t1;
-        }
-        public SKColor ColorFromHSV(double hue, double saturation, double value)
+        private SKColor ColorFromHSV(double hue, double saturation, double value)
         {
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
             double f = hue / 60 - Math.Floor(hue / 60);
@@ -264,6 +249,21 @@ namespace MeteoCharts.Charts
                 return new SKColor((Byte)t, (Byte)p, (Byte)v);
             else
                 return new SKColor((Byte)v, (Byte)p, (Byte)q);
+        }
+
+        private double ColorCalc(double c, double t1, double t2)
+        {
+
+            if (c < 0) c += 1d;
+            if (c > 1) c -= 1d;
+            if (6.0d * c < 1.0d) return t1 + (t2 - t1) * 6.0d * c;
+            if (2.0d * c < 1.0d) return t2;
+            if (3.0d * c < 2.0d) return t1 + (t2 - t1) * (2.0d / 3.0d - c) * 6.0d;
+            return t1;
+        }
+        private float gradient(TemperatureChartDataItem a, TemperatureChartDataItem b)
+        {
+            return (b.y - a.y) / (b.x - a.x);
         }
 
 

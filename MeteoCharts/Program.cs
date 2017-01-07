@@ -23,10 +23,10 @@ namespace MeteoCharts
 			var temperatureChartData = GetTemperatureChartData();
 
             RainfallChart rainChart = new RainfallChart(rainfallChartData);
-            rainChart.DrawChart(720, 150, "C:/RainfallChart.png");
+            rainChart.DrawChart(720, 150, "C:/Meteo/RainfallChart.png");
 
             TemperatureChart tempChart = new TemperatureChart(temperatureChartData);
-            tempChart.DrawChart(720, 150, "C:/TemperatureChart.png");
+            tempChart.DrawChart(720, 150, "C:/Meteo/TemperatureChart.png");
 		}
 
 		private static RainfallChartData GetRainfallChartData()
