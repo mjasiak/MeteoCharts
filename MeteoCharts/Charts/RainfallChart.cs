@@ -29,6 +29,7 @@ namespace MeteoCharts.Charts
                 canvas.Clear(SKColors.White);
 
                 canvas = DrawChartAxis(canvas);
+                canvas = DrawHours<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems,canvas);
 
                 ImageRender.Render(surface, pathFileSave);
             }
@@ -38,29 +39,23 @@ namespace MeteoCharts.Charts
             canvasWidth = _rainChartData.RainfallChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
             MathChartAxis(_chartSetting, canvasHeight);
+            MathChartValues<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems, spaceBetween);
         }
         
         protected override SKCanvas DrawChartAxis(SKCanvas canvas)
         {
             SKPaint paint = new SKPaint() { Color = new SKColor(208, 208, 208), IsAntialias = true, StrokeCap = SKStrokeCap.Round };
             foreach (var axis in _chartAxis)
-            {
-                
+            {                
                 canvas.DrawLine(axis.x0 + (0.08f * canvasHeight), axis.y0, axis.x1 + (0.09f * canvasHeight), axis.y1, paint);
             }
             return canvas;
         }
-        private SKCanvas DrawHours(SKCanvas canvas)
+        protected override SKCanvas DrawChartValues(SKCanvas canvas)
         {
-            SKPaint paintHour = new SKPaint() { Color = new SKColor(0, 0, 0), TextSize = 30.0f, TextAlign = SKTextAlign.Center, IsAntialias = true };
-
-            foreach (var obj in _rainChartData.RainfallChartDataItems)
-            {
-                if (_rainChartData.RainfallChartDataItems.First() == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
-                else canvas.DrawText(obj.Time.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
-            }
             return canvas;
         }
+       
 
         private IEnumerable<int> GetValues()
         {

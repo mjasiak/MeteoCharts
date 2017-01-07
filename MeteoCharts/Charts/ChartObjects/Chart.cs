@@ -41,8 +41,20 @@ namespace MeteoCharts.Charts.ChartObjects
             chartObject.x = spaceBetween + 105;
             chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject) + 20;
         }
+        protected SKCanvas DrawHours<T>(T chartListItems, SKCanvas canvas) where T : IEnumerable<ChartItem>
+        {
+            SKPaint paintHour = new SKPaint() { Color = new SKColor(0, 0, 0), TextSize = 30.0f, TextAlign = SKTextAlign.Center, IsAntialias = true };
+
+            foreach (var obj in chartListItems)
+            {
+                if (chartListItems.First() == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
+                else canvas.DrawText(obj.Time.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
+            }
+            return canvas;
+        }
 
         protected abstract SKCanvas DrawChartAxis(SKCanvas canvas);
+        protected abstract SKCanvas DrawChartValues(SKCanvas canvas);
         protected abstract void MathChart(int spaceBetween);
 
         protected ChartSetting SetChartRange(ChartSetting chartSetting, IEnumerable<int> values, int canvasHeight)

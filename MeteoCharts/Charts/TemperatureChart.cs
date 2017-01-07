@@ -36,6 +36,7 @@ namespace MeteoCharts.Charts
                 canvas = DrawChartAxis(canvas);
                 canvas = DrawChartBezier(canvas,spaceBetweenValues);
                 canvas = DrawChartValues(canvas);
+                canvas = DrawHours<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems, canvas);
                 
                 ImageRender.Render(surface, pathSaveFile);
             }
@@ -72,23 +73,18 @@ namespace MeteoCharts.Charts
             }
             return canvas;
         }
-        private SKCanvas DrawChartValues(SKCanvas canvas)
-        {
-            
+        protected override SKCanvas DrawChartValues(SKCanvas canvas)
+        {            
             SKPaint paintValues = new SKPaint() { Color = new SKColor(20, 20, 20), TextSize = 48.0f, TextAlign = SKTextAlign.Center, IsAntialias = true, FakeBoldText=true };
-            SKPaint paintCircle = new SKPaint() { Color = new SKColor(254, 254, 254) };
-            SKPaint paintHour = new SKPaint() { Color = new SKColor(0, 0, 0), TextSize = 30.0f, TextAlign = SKTextAlign.Center, IsAntialias = true };
+            SKPaint paintCircle = new SKPaint() { Color = new SKColor(254, 254, 254) };            
 
             foreach (var obj in _tempChartData.TemperatureChartDataItems)
             {
                 SKPaint paint = new SKPaint() { Color = obj.Color, StrokeCap = SKStrokeCap.Round };
-                canvas.DrawCircle(obj.x, obj.y, 8,paint);                               
                 canvas.DrawText(obj.chartValue.ToString() + "°", obj.x + 7, obj.y - 35, paintValues);
-                canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis+20,paint);
+                canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis + 20, paint);
+                canvas.DrawCircle(obj.x, obj.y, 8, paint);
                 canvas.DrawCircle(obj.x, obj.y, 5, paintCircle);
-
-                if(_tempChartData.TemperatureChartDataItems.First() == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f+40, paintHour);
-                else canvas.DrawText(obj.Time.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f+40, paintHour);
             }
             return canvas;
         }
@@ -134,7 +130,6 @@ namespace MeteoCharts.Charts
             canvas.DrawPath(path, paint);
             return canvas;
         }
-
 
         private IEnumerable<int> GetValues()
         {

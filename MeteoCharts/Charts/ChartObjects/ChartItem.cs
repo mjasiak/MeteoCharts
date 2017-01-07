@@ -11,6 +11,7 @@ namespace MeteoCharts.Charts.ChartObjects
         public float x { get; set; }
         public float y { get; set; }
 
+        public TimeSpan Time { get; set; }
         public int chartValue { get; set; }
     }
 }
