@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MeteoCharts.Charts.ChartObjects
 {
-    public class ChartRangeSetting
+    public class ChartSetting
     {
         public int min { get; set; }
         public int max { get; set; }

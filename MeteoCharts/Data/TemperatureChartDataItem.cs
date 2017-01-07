@@ -12,7 +12,5 @@ namespace MeteoCharts.Data
 		public WeatherIconType IconType { get; set; }
 
         public SKColor Color { get; set; }
-        public bool willFall { get; set; } = false;
-        public bool willClimb { get; set; } = false;
     }
 }

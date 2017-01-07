@@ -54,6 +54,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="SkiaSharp, Version=1.55.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\SkiaSharp.1.55.1\lib\net45\SkiaSharp.dll</HintPath>
@@ -88,7 +96,7 @@
     <Compile Include="Charts\ChartObjects\Chart.cs" />
     <Compile Include="Charts\ChartObjects\ChartAxis.cs" />
     <Compile Include="Charts\ChartObjects\ChartItem.cs" />
-    <Compile Include="Charts\ChartObjects\ChartRangeSetting.cs" />
+    <Compile Include="Charts\ChartObjects\ChartSetting.cs" />
     <Compile Include="Charts\RainfallChart.cs" />
     <Compile Include="Charts\TemperatureChart.cs" />
     <Compile Include="Colors\ColorsRepository.cs" />

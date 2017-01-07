@@ -9,11 +9,11 @@ namespace MeteoCharts.Charts.ChartObjects
 {
     public abstract class Chart
     {
-        protected ChartRangeSetting _chartSetting = new ChartRangeSetting();
+        protected ChartSetting _chartSetting = new ChartSetting();
         protected List<ChartAxis> _chartAxis = new List<ChartAxis>();
         protected int canvasWidth, canvasHeight;
 
-        protected void MathChartAxis(ChartRangeSetting chartSetting, int canvasHeight)
+        protected void MathChartAxis(ChartSetting chartSetting, int canvasHeight)
         {
             float height = SetChartHeight(canvasHeight);
             int row = chartSetting.valuesRangeInScale;
@@ -27,6 +27,15 @@ namespace MeteoCharts.Charts.ChartObjects
                 _chartAxis.Add(axis);
             }
         }
+        protected void MathChartValues<T>(T chartItemLists, int spaceBetween) where T : IEnumerable<ChartItem>
+        {
+            int space = 0;
+            foreach (var chartObj in chartItemLists)
+            {
+                MathChartValue(chartObj, space);
+                space += spaceBetween;
+            }
+        }
         protected void MathChartValue(ChartItem chartObject, int spaceBetween)
         {
             chartObject.x = spaceBetween + 105;
@@ -36,7 +45,7 @@ namespace MeteoCharts.Charts.ChartObjects
         protected abstract SKCanvas DrawChartAxis(SKCanvas canvas);
         protected abstract void MathChart(int spaceBetween);
 
-        protected ChartRangeSetting SetChartRange(ChartRangeSetting chartSetting, IEnumerable<int> values, int canvasHeight)
+        protected ChartSetting SetChartRange(ChartSetting chartSetting, IEnumerable<int> values, int canvasHeight)
         {
             int min = values.First();
             int max = values.First();
@@ -60,7 +69,7 @@ namespace MeteoCharts.Charts.ChartObjects
         {
             return height * 0.75f;
         }
-        private float GetHeightOfValueInPixels(ChartRangeSetting chartSett, ChartItem chartObj)
+        private float GetHeightOfValueInPixels(ChartSetting chartSett, ChartItem chartObj)
         {
             int minus = chartSett.maxInScale - chartObj.chartValue;
             int minusInScale = chartSett.valuesRangeInScale - minus;

@@ -48,18 +48,8 @@ namespace MeteoCharts.Charts
             GetValueAndColorOfItem();
 
             MathChartAxis(_chartSetting, canvasHeight);
-            MathChartValues(spaceBetween);         
-        }     
-        
-        private void MathChartValues(int spaceBetween)
-        {
-            int space = 0;
-            foreach (var chartObj in _tempChartData.TemperatureChartDataItems)
-            {
-                MathChartValue(chartObj, space);
-                space += spaceBetween;
-            }
-        }
+            MathChartValues<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems,spaceBetween);  
+        }                   
 
         protected override SKCanvas DrawChartAxis(SKCanvas canvas)
         {
@@ -160,8 +150,6 @@ namespace MeteoCharts.Charts
             TemperatureChartDataItem tempItem = _tempChartData.TemperatureChartDataItems.First();
             foreach(var item in _tempChartData.TemperatureChartDataItems)
             {
-                if (tempItem.Value > item.Value) tempItem.willFall = true;
-                else if(tempItem.Value < item.Value) tempItem.willClimb = true;
                 item.chartValue = item.Value;
                 item.Color = GetColor(item.Value);
                 tempItem = item;
