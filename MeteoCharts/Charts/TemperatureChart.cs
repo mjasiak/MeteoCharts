@@ -155,7 +155,7 @@ namespace MeteoCharts.Charts
             foreach(var item in _tempChartData.TemperatureChartDataItems)
             {
                 item.chartValue = item.Value;
-                item.Color = ColorsRepository.GetColor(item);
+                item.Color = TemperatureChartColors.GetColor(item);
                 tempItem = item;
             }
         }       

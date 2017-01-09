@@ -99,7 +99,8 @@
     <Compile Include="Charts\ChartObjects\ChartSetting.cs" />
     <Compile Include="Charts\RainfallChart.cs" />
     <Compile Include="Charts\TemperatureChart.cs" />
-    <Compile Include="Colors\ColorsRepository.cs" />
+    <Compile Include="Colors\RainfallChartColors.cs" />
+    <Compile Include="Colors\TemperatureChartColors.cs" />
     <Compile Include="Interfaces\IChartable.cs" />
     <Compile Include="Interfaces\IRenderable.cs" />
     <Compile Include="Program.cs" />

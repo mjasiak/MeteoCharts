@@ -33,6 +33,7 @@ namespace MeteoCharts.Charts
                 canvas = DrawChartAxis(canvas);
                 canvas = DrawHours<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems,canvas);
                 canvas = DrawChartValues(canvas);
+                canvas = DrawChartSquares(canvas, 4.0f);
 
                 ImageRender.Render(surface, pathFileSave);
             }
@@ -57,19 +58,28 @@ namespace MeteoCharts.Charts
         }
         protected override SKCanvas DrawChartValues(SKCanvas canvas)
         {
-            SKPath path = new SKPath();           
-            
-            SKPaint paint = new SKPaint() { Shader = ColorsRepository.GetRainColor(canvasWidth,canvasHeight) };
+            SKPaint paintValues = new SKPaint() { Color = new SKColor(20, 20, 20), TextSize = 36.0f, TextAlign = SKTextAlign.Right, IsAntialias = true, FakeBoldText = true };
+            SKPaint paintTextValues = new SKPaint() { Color = new SKColor(20, 20, 20), TextSize = 22.0f, TextAlign = SKTextAlign.Left, IsAntialias = true,};
+            foreach (var obj in _rainChartData.RainfallChartDataItems)
+            {
+                canvas.DrawText(obj.chartValue.ToString(), obj.x -5, obj.y, paintValues);
+                canvas.DrawText("mm", obj.x + 5, obj.y, paintTextValues);
+            }
+            return canvas;
+        }
+        private SKCanvas DrawChartSquares(SKCanvas canvas, Single squareHeight)
+        {
+            SKPath path = new SKPath();
+            SKPaint paint = new SKPaint() { Shader = RainfallChartColors.GetRainColor(canvasWidth, canvasHeight) };
 
-            foreach(var obj in _rainChartData.RainfallChartDataItems)
+            foreach (var obj in _rainChartData.RainfallChartDataItems)
             {
                 if (obj.chartValue > 0)
-                for(int i = 1; i <= obj.chartValue; i++)
-                {
-                    var rect = SKRect.Create(obj.x - (spaceBetween/2), (float)canvasHeight * 0.75f + 20 - (i * 7), spaceBetween - 5, 4.0f);
+                    for (int i = 1; i <= obj.chartValue; i++)
+                    {
+                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * 0.75f + 20 - (i * 7), spaceBetween - 5, squareHeight);
                         path.AddRect(rect);
-                        //canvas.DrawRect(rect, paint);
-                };
+                    };
                 canvas.DrawPath(path, paint);
             }
             return canvas;
