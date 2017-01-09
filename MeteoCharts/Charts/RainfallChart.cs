@@ -1,4 +1,5 @@
 ﻿using MeteoCharts.Charts.ChartObjects;
+using MeteoCharts.Colors;
 using MeteoCharts.Data;
 using MeteoCharts.Interfaces;
 using MeteoCharts.Render;
@@ -22,6 +23,7 @@ namespace MeteoCharts.Charts
         public void DrawChart(int canvasHeight, int spaceBetween, string pathFileSave)
         {
             this.canvasHeight = canvasHeight;
+            this.spaceBetween = spaceBetween;
             MathChart();
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
@@ -39,6 +41,7 @@ namespace MeteoCharts.Charts
         {
             canvasWidth = _rainChartData.RainfallChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
+            GetChartValues();
             MathChartAxis(_chartSetting, canvasHeight);
             MathChartValues<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems);
         }
@@ -54,15 +57,20 @@ namespace MeteoCharts.Charts
         }
         protected override SKCanvas DrawChartValues(SKCanvas canvas)
         {
+            SKPath path = new SKPath();           
             
-            SKPaint paint = new SKPaint() { Color = new SKColor(0, 0, 0), IsAntialias = true, StrokeWidth = 4, Style = SKPaintStyle.Stroke };
+            SKPaint paint = new SKPaint() { Shader = ColorsRepository.GetRainColor(canvasWidth,canvasHeight) };
 
             foreach(var obj in _rainChartData.RainfallChartDataItems)
             {
-                for(int i = 1; i > obj.chartValue; i++)
+                if (obj.chartValue > 0)
+                for(int i = 1; i <= obj.chartValue; i++)
                 {
-                    canvas.DrawRect(SKRect.Create(obj.x, obj.y+(5*i), spaceBetween, 4.0f), paint);
-                }
+                    var rect = SKRect.Create(obj.x - (spaceBetween/2), (float)canvasHeight * 0.75f + 20 - (i * 7), spaceBetween - 5, 4.0f);
+                        path.AddRect(rect);
+                        //canvas.DrawRect(rect, paint);
+                };
+                canvas.DrawPath(path, paint);
             }
             return canvas;
         }
@@ -76,6 +84,14 @@ namespace MeteoCharts.Charts
                 values.Add((Int32)value.Value);
             }
             return values;
+        }
+        private void GetChartValues()
+        {
+            RainfallChartDataItem rainItem = _rainChartData.RainfallChartDataItems.First();
+            foreach (var item in _rainChartData.RainfallChartDataItems)
+            {
+                item.chartValue = (Int32)item.Value;
+            }
         }
         public ChartSetting SetChartRange(ChartSetting chartSetting, IEnumerable<int> values)
         {

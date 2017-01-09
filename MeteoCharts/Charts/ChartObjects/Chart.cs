@@ -32,13 +32,13 @@ namespace MeteoCharts.Charts.ChartObjects
             int space = 0;
             foreach (var chartObj in chartItemLists)
             {
-                MathChartValue(chartObj);
+                MathChartValue(chartObj, space);
                 space += spaceBetween;
             }
         }
-        protected void MathChartValue(ChartItem chartObject)
+        protected void MathChartValue(ChartItem chartObject, int space)
         {
-            chartObject.x = spaceBetween + (canvasHeight-(canvasHeight * 0.80f));
+            chartObject.x = space + (canvasHeight-(canvasHeight * 0.80f));
             chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject) + 20;
         }
         protected SKCanvas DrawHours<T>(T chartListItems, SKCanvas canvas) where T : IEnumerable<ChartItem>

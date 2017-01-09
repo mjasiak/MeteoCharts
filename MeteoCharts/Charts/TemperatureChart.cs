@@ -1,4 +1,5 @@
 ﻿using MeteoCharts.Charts.ChartObjects;
+using MeteoCharts.Colors;
 using MeteoCharts.Data;
 using MeteoCharts.Enums;
 using MeteoCharts.Interfaces;
@@ -90,10 +91,7 @@ namespace MeteoCharts.Charts
             return canvas;
         }
         private SKCanvas DrawChartBezier(SKCanvas canvas, int spaceBetweenValues)
-        {
-            SKPath path = new SKPath();
-            SKPaint paint = new SKPaint() { Color= new SKColor(0, 0, 0), IsAntialias= true, StrokeWidth = 4, Style=SKPaintStyle.Stroke };
-                                
+        {                                          
             float m = 0;
             float dx1 = 0;
             float dy1 = 0;
@@ -103,13 +101,23 @@ namespace MeteoCharts.Charts
             float f = 0.37f;
             float t = 0.6f;
 
-            TemperatureChartDataItem prevObj = _tempChartData.TemperatureChartDataItems.First();
-            path.MoveTo(prevObj.x, prevObj.y);
+            TemperatureChartDataItem prevObj = _tempChartData.TemperatureChartDataItems.First();           
             for (int i = 1; i <= _tempChartData.TemperatureChartDataItems.Count()-2; i++)
-            {              
+            {
+                SKPath path = new SKPath();
+                path.MoveTo(prevObj.x, prevObj.y);
                 TemperatureChartDataItem currObj = _tempChartData.TemperatureChartDataItems.ToList()[i];
                 TemperatureChartDataItem nextObj = _tempChartData.TemperatureChartDataItems.ToList()[i+1];
-                if(nextObj != null) {
+
+                SKPoint prevPoint = new SKPoint(prevObj.x, prevObj.y);
+                SKPoint currPoint = new SKPoint(currObj.x, currObj.y);
+
+                SKColor[] colors = new SKColor[2] { prevObj.Color, currObj.Color };
+
+                var shader = SKShader.CreateLinearGradient(prevPoint,currPoint,colors,null,SKShaderTileMode.Clamp);
+                SKPaint paint = new SKPaint() { IsAntialias = true, StrokeWidth = 4, Style = SKPaintStyle.Stroke, Shader = shader };
+
+                if (nextObj != null) {
                     m = gradient(prevObj, nextObj);
                     dx2 = (nextObj.x - currObj.x) * -f;
                     dy2 = dx2 * m * t;
@@ -126,9 +134,9 @@ namespace MeteoCharts.Charts
 
                 dx1 = dx2;
                 dy1 = dy2;
-                prevObj = currObj;             
-            }
-            canvas.DrawPath(path, paint);
+                prevObj = currObj;
+                canvas.DrawPath(path, paint);
+            }           
             return canvas;
         }
 
@@ -147,110 +155,14 @@ namespace MeteoCharts.Charts
             foreach(var item in _tempChartData.TemperatureChartDataItems)
             {
                 item.chartValue = item.Value;
-                item.Color = GetColor(item.Value);
+                item.Color = ColorsRepository.GetColor(item);
                 tempItem = item;
             }
-        }
-        private SKColor GetColor(int i)
-        {
-            return ColorFromHSL(GetColorInScale(i), 0.6, 0.6);
-            //return ColorFromHSV(GetColorInScale(i), 0.5, 0.5);
-        }
-        private double GetColorInScale(double i)
-        {
-            if (i <= 50 && i > -20)
-            {
-                double value = 50 - i;
-                double scaleValue = 70 - value;
-                i = 3.42 * (double)scaleValue;
-            }
-            else if (i > 50) i = 70 * 3.42;
-            else i = 0;
-
-            i = (240 - i) * 3.42;
-            return i;
-        }
-
-        private SKColor ColorFromHSL(double Hue, double Saturation, double Luminosity)
-        {
-            byte r, g, b;
-            if (Saturation == 0)
-            {
-                r = (byte)Math.Round(Luminosity * 255d);
-                g = (byte)Math.Round(Luminosity * 255d);
-                b = (byte)Math.Round(Luminosity * 255d);
-            }
-            else
-            {
-                double t1, t2;
-                double th = Hue / 6.0d;
-
-                if (Luminosity < 0.5d)
-                {
-                    t2 = Luminosity * (1d + Saturation);
-                }
-                else
-                {
-                    t2 = (Luminosity + Saturation) - (Luminosity * Saturation);
-                }
-                t1 = 2d * Luminosity - t2;
-
-                double tr, tg, tb;
-                tr = th + (1.0d / 3.0d);
-                tg = th;
-                tb = th - (1.0d / 3.0d);
-
-                tr = ColorCalc(tr, t1, t2);
-                tg = ColorCalc(tg, t1, t2);
-                tb = ColorCalc(tb, t1, t2);
-
-                r = (byte)Math.Round(tr * 255d);
-                g = (byte)Math.Round(tg * 255d);
-                b = (byte)Math.Round(tb * 255d);
-            }
-            return new SKColor(r, g, b);
-        }
-        private SKColor ColorFromHSV(double hue, double saturation, double value)
-        {
-            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
-            double f = hue / 60 - Math.Floor(hue / 60);
-
-            value = value * 255;
-            int v = Convert.ToInt32(value);
-            int p = Convert.ToInt32(value * (1 - saturation));
-            int q = Convert.ToInt32(value * (1 - f * saturation));
-            int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
-
-            if (hi == 0)
-                return new SKColor((Byte)v, (Byte)t, (Byte)p);
-            else if (hi == 1)
-                return new SKColor((Byte)q, (Byte)v, (Byte)p);
-            else if (hi == 2)
-                return new SKColor((Byte)p, (Byte)v, (Byte)t);
-            else if (hi == 3)
-                return new SKColor((Byte)p, (Byte)q, (Byte)v);
-            else if (hi == 4)
-                return new SKColor((Byte)t, (Byte)p, (Byte)v);
-            else
-                return new SKColor((Byte)v, (Byte)p, (Byte)q);
-        }
-
-        private double ColorCalc(double c, double t1, double t2)
-        {
-
-            if (c < 0) c += 1d;
-            if (c > 1) c -= 1d;
-            if (6.0d * c < 1.0d) return t1 + (t2 - t1) * 6.0d * c;
-            if (2.0d * c < 1.0d) return t2;
-            if (3.0d * c < 2.0d) return t1 + (t2 - t1) * (2.0d / 3.0d - c) * 6.0d;
-            return t1;
-        }
+        }       
         private float gradient(TemperatureChartDataItem a, TemperatureChartDataItem b)
         {
             return (b.y - a.y) / (b.x - a.x);
         }
-
-
     }
 }
     
