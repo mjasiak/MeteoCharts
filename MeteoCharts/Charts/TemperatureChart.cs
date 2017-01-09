@@ -27,7 +27,8 @@ namespace MeteoCharts.Charts
         public void DrawChart(int canvasHeight, int spaceBetweenValues, string pathSaveFile)
         {
             this.canvasHeight = canvasHeight;
-            MathChart(spaceBetweenValues);
+            this.spaceBetween = spaceBetweenValues;
+            MathChart();
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
@@ -41,7 +42,7 @@ namespace MeteoCharts.Charts
                 ImageRender.Render(surface, pathSaveFile);
             }
         }
-        protected override void MathChart(int spaceBetween)
+        protected override void MathChart()
         {
             canvasWidth = _tempChartData.TemperatureChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
@@ -49,7 +50,7 @@ namespace MeteoCharts.Charts
             GetValueAndColorOfItem();
 
             MathChartAxis(_chartSetting, canvasHeight);
-            MathChartValues<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems,spaceBetween);  
+            MathChartValues<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems);  
         }                   
 
         protected override SKCanvas DrawChartAxis(SKCanvas canvas)
@@ -68,8 +69,8 @@ namespace MeteoCharts.Charts
                     paint.Color = new SKColor(125, 127, 126);
                     paint.StrokeWidth = 2;
                 }
-                canvas.DrawLine(axis.x0 + (0.08f * canvasHeight), axis.y0, axis.x1 + (0.09f * canvasHeight), axis.y1, paint);
-                canvas.DrawText(axis.value.ToString(), axis.x0 + (0.06f * canvasHeight), axis.y0 + 10, paint2);
+                canvas.DrawLine(axis.x0 + (0.1f * canvasHeight), axis.y0, axis.x1 + (canvasHeight - (0.84f * canvasHeight)), axis.y1, paint);
+                canvas.DrawText(axis.value.ToString(), axis.x0 +  (canvasHeight - (0.92f * canvasHeight)), axis.y0 + 10, paint2);
             }
             return canvas;
         }
@@ -152,8 +153,8 @@ namespace MeteoCharts.Charts
         }
         private SKColor GetColor(int i)
         {
-            //return ColorFromHSL(GetColorInScale(i), 0.6, 0.6);
-            return ColorFromHSV(GetColorInScale(i), 0.5, 0.5);
+            return ColorFromHSL(GetColorInScale(i), 0.6, 0.6);
+            //return ColorFromHSV(GetColorInScale(i), 0.5, 0.5);
         }
         private double GetColorInScale(double i)
         {

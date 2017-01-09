@@ -11,7 +11,7 @@ namespace MeteoCharts.Charts.ChartObjects
     {
         protected ChartSetting _chartSetting = new ChartSetting();
         protected List<ChartAxis> _chartAxis = new List<ChartAxis>();
-        protected int canvasWidth, canvasHeight;
+        protected int canvasWidth, canvasHeight, spaceBetween;
 
         protected void MathChartAxis(ChartSetting chartSetting, int canvasHeight)
         {
@@ -27,18 +27,18 @@ namespace MeteoCharts.Charts.ChartObjects
                 _chartAxis.Add(axis);
             }
         }
-        protected void MathChartValues<T>(T chartItemLists, int spaceBetween) where T : IEnumerable<ChartItem>
+        protected void MathChartValues<T>(T chartItemLists) where T : IEnumerable<ChartItem>
         {
             int space = 0;
             foreach (var chartObj in chartItemLists)
             {
-                MathChartValue(chartObj, space);
+                MathChartValue(chartObj);
                 space += spaceBetween;
             }
         }
-        protected void MathChartValue(ChartItem chartObject, int spaceBetween)
+        protected void MathChartValue(ChartItem chartObject)
         {
-            chartObject.x = spaceBetween + 105;
+            chartObject.x = spaceBetween + (canvasHeight-(canvasHeight * 0.80f));
             chartObject.y = GetHeightOfValueInPixels(_chartSetting, chartObject) + 20;
         }
         protected SKCanvas DrawHours<T>(T chartListItems, SKCanvas canvas) where T : IEnumerable<ChartItem>
@@ -47,7 +47,7 @@ namespace MeteoCharts.Charts.ChartObjects
 
             foreach (var obj in chartListItems)
             {
-                if (chartListItems.First() == obj) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
+                if (DateTime.Now.Hour == obj.Time.Hours) canvas.DrawText("TERAZ", obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
                 else canvas.DrawText(obj.Time.ToString(@"hh\:mm"), obj.x, _chartSetting.heightOfAxis * 1.05f + 40, paintHour);
             }
             return canvas;
@@ -55,7 +55,7 @@ namespace MeteoCharts.Charts.ChartObjects
 
         protected abstract SKCanvas DrawChartAxis(SKCanvas canvas);
         protected abstract SKCanvas DrawChartValues(SKCanvas canvas);
-        protected abstract void MathChart(int spaceBetween);
+        protected abstract void MathChart();
 
         protected ChartSetting SetChartRange(ChartSetting chartSetting, IEnumerable<int> values, int canvasHeight)
         {

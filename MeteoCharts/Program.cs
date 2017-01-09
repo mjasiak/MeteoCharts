@@ -12,7 +12,7 @@ namespace MeteoCharts
 	{
 		private static readonly uint[] RainfallValues = { 30, 36, 5, 3, 0, 28 };
 		private static readonly int[] TemperatureValues = {28, 19, -1, 2, -5, -11 };
-        //private static readonly int[] TemperatureValues = { 30, 19, 19, 17, 14, 8, 3 };
+        //private static readonly int[] TemperatureValues = { 28, 19, 19, 17, 14, 8, 3, 35 };
         private static TimeSpan _timeOfToday;
 
 		private static void Main()

@@ -22,7 +22,7 @@ namespace MeteoCharts.Charts
         public void DrawChart(int canvasHeight, int spaceBetween, string pathFileSave)
         {
             this.canvasHeight = canvasHeight;
-            MathChart(spaceBetween);
+            MathChart();
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
                 SKCanvas canvas = surface.Canvas;
@@ -30,16 +30,17 @@ namespace MeteoCharts.Charts
 
                 canvas = DrawChartAxis(canvas);
                 canvas = DrawHours<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems,canvas);
+                canvas = DrawChartValues(canvas);
 
                 ImageRender.Render(surface, pathFileSave);
             }
         }
-        protected override void MathChart(int spaceBetween)
+        protected override void MathChart()
         {
             canvasWidth = _rainChartData.RainfallChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
             MathChartAxis(_chartSetting, canvasHeight);
-            MathChartValues<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems, spaceBetween);
+            MathChartValues<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems);
         }
         
         protected override SKCanvas DrawChartAxis(SKCanvas canvas)
@@ -53,6 +54,16 @@ namespace MeteoCharts.Charts
         }
         protected override SKCanvas DrawChartValues(SKCanvas canvas)
         {
+            
+            SKPaint paint = new SKPaint() { Color = new SKColor(0, 0, 0), IsAntialias = true, StrokeWidth = 4, Style = SKPaintStyle.Stroke };
+
+            foreach(var obj in _rainChartData.RainfallChartDataItems)
+            {
+                for(int i = 1; i > obj.chartValue; i++)
+                {
+                    canvas.DrawRect(SKRect.Create(obj.x, obj.y+(5*i), spaceBetween, 4.0f), paint);
+                }
+            }
             return canvas;
         }
        
