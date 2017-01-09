@@ -36,6 +36,7 @@ namespace MeteoCharts.Charts
                 canvas.Clear(SKColors.White);  
                                   
                 canvas = DrawChartAxis(canvas);
+                canvas = DrawChartScale(canvas);
                 canvas = DrawChartBezier(canvas,spaceBetweenValues);
                 canvas = DrawChartValues(canvas);
                 canvas = DrawHours<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems, canvas);
@@ -57,7 +58,6 @@ namespace MeteoCharts.Charts
         protected override SKCanvas DrawChartAxis(SKCanvas canvas)
         {
             SKPaint paint = new SKPaint() { Color = new SKColor(208, 208, 208), IsAntialias = true, StrokeCap = SKStrokeCap.Round };
-            SKPaint paint2 = new SKPaint() { Color = new SKColor(45, 45, 45), IsAntialias = true, TextSize = 30.0f, IsStroke = false, TextAlign = SKTextAlign.Right };
 
             foreach (var axis in _chartAxis)
             {
@@ -71,7 +71,6 @@ namespace MeteoCharts.Charts
                     paint.StrokeWidth = 2;
                 }
                 canvas.DrawLine(axis.x0 + (0.1f * canvasHeight), axis.y0, axis.x1 + (canvasHeight - (0.84f * canvasHeight)), axis.y1, paint);
-                canvas.DrawText(axis.value.ToString(), axis.x0 +  (canvasHeight - (0.92f * canvasHeight)), axis.y0 + 10, paint2);
             }
             return canvas;
         }
@@ -87,6 +86,26 @@ namespace MeteoCharts.Charts
                 canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis + 20, paint);
                 canvas.DrawCircle(obj.x, obj.y, 8, paint);
                 canvas.DrawCircle(obj.x, obj.y, 5, paintCircle);
+            }
+            return canvas;
+        }
+        protected override SKCanvas DrawChartScale(SKCanvas canvas)
+        {
+            SKPaint paint = new SKPaint() { Color = new SKColor(45, 45, 45), IsAntialias = true, TextSize = 30.0f, IsStroke = false, TextAlign = SKTextAlign.Right };
+
+            foreach (var axis in _chartAxis)
+            {
+                if (axis.value != 0)
+                {
+                    paint.Color = new SKColor(45, 45, 45);
+                    paint.FakeBoldText = false;
+                }
+                else
+                {
+                    paint.Color = new SKColor(65, 69, 68);
+                    paint.FakeBoldText = true;
+                }
+                canvas.DrawText(axis.value.ToString(), axis.x0 + (canvasHeight - (0.92f * canvasHeight)), axis.y0 + 10, paint);
             }
             return canvas;
         }

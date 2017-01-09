@@ -11,8 +11,9 @@ namespace MeteoCharts
 	internal class Program
 	{
 		private static readonly uint[] RainfallValues = { 30, 36, 5, 3, 0, 28 };
-		//private static readonly int[] TemperatureValues = {28, 19, -1, 2, -5, -11 };
-        private static readonly int[] TemperatureValues = { 49, 28, 19, -1, 2, -5, -11, -19 };
+        //private static readonly uint[] RainfallValues = { 22, 16, 5, 3, 0, 15 };
+        private static readonly int[] TemperatureValues = {28, 19, -1, 2, -5, -11, -8};
+        //private static readonly int[] TemperatureValues = { 49, 28, 19, -1, 2, -5, -11, -19 };
         //private static readonly int[] TemperatureValues = { 28, 19, 19, 17, 14, 8, 3, 35 };
         private static TimeSpan _timeOfToday;
 

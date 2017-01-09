@@ -33,7 +33,7 @@ namespace MeteoCharts.Charts
                 canvas = DrawChartAxis(canvas);
                 canvas = DrawHours<IEnumerable<RainfallChartDataItem>>(_rainChartData.RainfallChartDataItems,canvas);
                 canvas = DrawChartValues(canvas);
-                canvas = DrawChartSquares(canvas, 4.0f);
+                canvas = DrawChartSquares(canvas, 4.0f, 2.0f);
 
                 ImageRender.Render(surface, pathFileSave);
             }
@@ -62,22 +62,50 @@ namespace MeteoCharts.Charts
             SKPaint paintTextValues = new SKPaint() { Color = new SKColor(20, 20, 20), TextSize = 22.0f, TextAlign = SKTextAlign.Left, IsAntialias = true,};
             foreach (var obj in _rainChartData.RainfallChartDataItems)
             {
-                canvas.DrawText(obj.chartValue.ToString(), obj.x -5, obj.y, paintValues);
-                canvas.DrawText("mm", obj.x + 5, obj.y, paintTextValues);
+                canvas.DrawText(obj.chartValue.ToString(), obj.x -5, obj.y-15, paintValues);
+                canvas.DrawText("mm", obj.x + 5, obj.y-15, paintTextValues);
             }
             return canvas;
         }
-        private SKCanvas DrawChartSquares(SKCanvas canvas, Single squareHeight)
+        protected override SKCanvas DrawChartScale(SKCanvas canvas)
+        {
+            return canvas;
+        }
+
+        private SKCanvas DrawChartSquares(SKCanvas canvas, Single squareHeight, Single squareSpacing)
         {
             SKPath path = new SKPath();
-            SKPaint paint = new SKPaint() { Shader = RainfallChartColors.GetRainColor(canvasWidth, canvasHeight) };
+            SKPaint paint = new SKPaint() { Shader = RainfallChartColors.GetRainColor(canvasWidth, canvasHeight, _chartSetting.oneInScale * 30) };
+
+            foreach (var obj in _rainChartData.RainfallChartDataItems)
+            {
+                int i = 1;
+                float heightControl = canvasHeight * 0.75f+20;
+                if (obj.chartValue > 0)
+                {
+                    while(heightControl > obj.y)
+                    {
+                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * 0.75f + 20-((squareHeight*squareSpacing)*i), spaceBetween - 5, squareHeight);
+                        path.AddRect(rect);
+                        canvas.DrawPath(path, paint);
+                        heightControl -= ((squareSpacing * squareHeight));
+                        i += 1;
+                    }
+                }                
+            }
+            return canvas;
+        }
+        private SKCanvas DrawChartSquares(SKCanvas canvas)
+        {
+            SKPath path = new SKPath();
+            SKPaint paint = new SKPaint() { Shader = RainfallChartColors.GetRainColor(canvasWidth, canvasHeight, _chartSetting.oneInScale * 30) };
 
             foreach (var obj in _rainChartData.RainfallChartDataItems)
             {
                 if (obj.chartValue > 0)
                     for (int i = 1; i <= obj.chartValue; i++)
                     {
-                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * 0.75f + 20 - (i * 7), spaceBetween - 5, squareHeight);
+                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * 0.75f + 20 - (i * 7), spaceBetween - 5, 4.0f);
                         path.AddRect(rect);
                     };
                 canvas.DrawPath(path, paint);

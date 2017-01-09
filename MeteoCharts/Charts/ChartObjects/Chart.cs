@@ -54,6 +54,7 @@ namespace MeteoCharts.Charts.ChartObjects
         }
 
         protected abstract SKCanvas DrawChartAxis(SKCanvas canvas);
+        protected abstract SKCanvas DrawChartScale(SKCanvas canvas);
         protected abstract SKCanvas DrawChartValues(SKCanvas canvas);
         protected abstract void MathChart();
 
