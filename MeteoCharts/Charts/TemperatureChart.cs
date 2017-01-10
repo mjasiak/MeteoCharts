@@ -51,9 +51,7 @@ namespace MeteoCharts.Charts
         {
             canvasWidth = _tempChartData.TemperatureChartDataItems.Count() * spaceBetween;
             _chartSetting = SetChartRange(_chartSetting, GetValues(), canvasHeight);
-
             GetValueAndColorOfItem();
-
             MathChartAxis(_chartSetting, canvasHeight);
             MathChartValues<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems);  
         }                   
