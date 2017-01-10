@@ -10,22 +10,37 @@ namespace MeteoCharts.Colors
 {
     public class TemperatureChartColors
     {
-        private static SKColor _hiTempColor = new SKColor(247, 200, 58);
-        private static SKColor _loTempColor = new SKColor(46, 129, 197);
+        private static SKColor _tempColorFor45 = new SKColor(252,121,58);
+        private static SKColor _tempColorFor30 = new SKColor(246,203,64);
+        private static SKColor _tempColorFor15 = new SKColor(193,220,103);
+        private static SKColor _tempColorFor0 = new SKColor(85,191,191);
+        private static SKColor _tempColorForMinus11 = new SKColor(65,127,164);
 
         public static SKColor GetColor(TemperatureChartDataItem tempItem)
         {
-            if (tempItem.Value < 30 && tempItem.Value > -15)
+            if (tempItem.chartValue >= 45) return _tempColorFor45;
+            else if (tempItem.chartValue < 45 && tempItem.chartValue >= 30)
             {
-                float value = 30 - tempItem.Value;
-                float scaleValue = 45 - value;
-                float percent = scaleValue / 45;
-                return GetAverage(percent, _hiTempColor, _loTempColor);
+                float percent = GetPercentageOfGradient(45, 15, tempItem.chartValue);
+                return GetAverage(percent, _tempColorFor45, _tempColorFor30);
             }
-            else if (tempItem.Value <= -15) return _loTempColor;
-            else return _hiTempColor;
+            else if (tempItem.chartValue < 30 && tempItem.chartValue >= 15)
+            {
+                float percent = GetPercentageOfGradient(30, 15, tempItem.chartValue);
+                return GetAverage(percent, _tempColorFor30, _tempColorFor15);
+            }
+            else if (tempItem.chartValue < 15 && tempItem.chartValue >= 0)
+            {
+                float percent = GetPercentageOfGradient(15, 15, tempItem.chartValue);
+                return GetAverage(percent, _tempColorFor15, _tempColorFor0);
+            }
+            else if (tempItem.chartValue < 0 && tempItem.chartValue >= -11)
+            {
+                float percent = GetPercentageOfGradient(0, 11, tempItem.chartValue);
+                return GetAverage(percent, _tempColorFor0, _tempColorForMinus11);
+            }
+            else return _tempColorForMinus11;
         }
-
         private static SKColor GetAverage(float percentage, SKColor high, SKColor low)
         {
             var w = percentage * 2 - 1;
@@ -38,6 +53,12 @@ namespace MeteoCharts.Colors
             int b = (Int32)(high.Blue * w1 + low.Blue * w2);
 
             return new SKColor((byte)r, (byte)g, (byte)b);
+        }
+        private static float GetPercentageOfGradient(float maxValue, float valueRange, float itemValue)
+        {
+            float value = maxValue - itemValue;
+            float scaleValue = valueRange - value;
+            return scaleValue / valueRange;
         }
     }
 }

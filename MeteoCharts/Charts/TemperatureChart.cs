@@ -169,14 +169,15 @@ namespace MeteoCharts.Charts
         }
         private SKCanvas DrawChartImages(SKCanvas canvas)
         {
+            int imageWidth = 50;
             foreach (var obj in _tempChartData.TemperatureChartDataItems)
             {
-                Stream fileStream = File.OpenRead();
+                Stream fileStream = File.OpenRead("Charts/ChartObjects/Images/"+obj.IconType+".png");
                 using (var stream = new SKManagedStream(fileStream))
                 using (var bitmap = SKBitmap.Decode(stream))
                 using (var paint = new SKPaint())
                 {
-                    canvas.DrawBitmap(bitmap, SKRect.Create(obj.x,_chartSetting.heightOfAxis * 1.1f,50, 50), paint);
+                    canvas.DrawBitmap(bitmap, SKRect.Create(obj.x-imageWidth/2,_chartSetting.heightOfAxis * 1.17f,imageWidth, 50), paint);
                 }
             }
                 return canvas;
