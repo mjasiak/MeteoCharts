@@ -1,11 +1,12 @@
-﻿using SkiaSharp;
+﻿using MeteoCharts.Charts.ChartObjects;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MeteoCharts.Charts.ChartObjects
+namespace MeteoCharts.Charts
 {
     public abstract class Chart
     {
