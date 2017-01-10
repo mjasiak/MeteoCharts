@@ -39,7 +39,9 @@ namespace MeteoCharts.Charts
                 canvas = DrawChartScale(canvas);
                 canvas = DrawChartBezier(canvas,spaceBetweenValues);
                 canvas = DrawChartValues(canvas);
+                canvas = DrawChartValuesEnchancers(canvas);
                 canvas = DrawHours<IEnumerable<TemperatureChartDataItem>>(_tempChartData.TemperatureChartDataItems, canvas);
+                canvas = DrawChartImages(canvas);
                 
                 ImageRender.Render(surface, pathSaveFile);
             }
@@ -77,15 +79,10 @@ namespace MeteoCharts.Charts
         protected override SKCanvas DrawChartValues(SKCanvas canvas)
         {            
             SKPaint paintValues = new SKPaint() { Color = new SKColor(20, 20, 20), TextSize = 48.0f, TextAlign = SKTextAlign.Center, IsAntialias = true, FakeBoldText=true };
-            SKPaint paintCircle = new SKPaint() { Color = new SKColor(254, 254, 254) };            
-
+                       
             foreach (var obj in _tempChartData.TemperatureChartDataItems)
-            {
-                SKPaint paint = new SKPaint() { Color = obj.Color, StrokeCap = SKStrokeCap.Round };
-                canvas.DrawText(obj.chartValue.ToString() + "°", obj.x + 7, obj.y - 35, paintValues);
-                canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis + 20, paint);
-                canvas.DrawCircle(obj.x, obj.y, 8, paint);
-                canvas.DrawCircle(obj.x, obj.y, 5, paintCircle);
+            {               
+                canvas.DrawText(obj.chartValue.ToString() + "°", obj.x + 7, obj.y - 35, paintValues);               
             }
             return canvas;
         }
@@ -106,6 +103,18 @@ namespace MeteoCharts.Charts
                     paint.FakeBoldText = true;
                 }
                 canvas.DrawText(axis.value.ToString(), axis.x0 + (canvasHeight - (0.92f * canvasHeight)), axis.y0 + 10, paint);
+            }
+            return canvas;
+        }
+        private SKCanvas DrawChartValuesEnchancers(SKCanvas canvas)
+        {
+            SKPaint whiteCircle = new SKPaint() { Color = new SKColor(254, 254, 254) };
+            foreach (var obj in _tempChartData.TemperatureChartDataItems)
+            {
+                SKPaint paint = new SKPaint() { Color = obj.Color, StrokeCap = SKStrokeCap.Round };
+                canvas.DrawLine(obj.x, obj.y, obj.x, _chartSetting.heightOfAxis + 20, paint);
+                canvas.DrawCircle(obj.x, obj.y, 8, paint);
+                canvas.DrawCircle(obj.x, obj.y, 5, whiteCircle);
             }
             return canvas;
         }
@@ -157,6 +166,20 @@ namespace MeteoCharts.Charts
                 canvas.DrawPath(path, paint);
             }           
             return canvas;
+        }
+        private SKCanvas DrawChartImages(SKCanvas canvas)
+        {
+            foreach (var obj in _tempChartData.TemperatureChartDataItems)
+            {
+                Stream fileStream = File.OpenRead();
+                using (var stream = new SKManagedStream(fileStream))
+                using (var bitmap = SKBitmap.Decode(stream))
+                using (var paint = new SKPaint())
+                {
+                    canvas.DrawBitmap(bitmap, SKRect.Create(obj.x,_chartSetting.heightOfAxis * 1.1f,50, 50), paint);
+                }
+            }
+                return canvas;
         }
 
         private IEnumerable<int> GetValues()
