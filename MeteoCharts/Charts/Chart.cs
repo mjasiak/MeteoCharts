@@ -13,10 +13,11 @@ namespace MeteoCharts.Charts
         protected ChartSetting _chartSetting = new ChartSetting();
         protected List<ChartAxis> _chartAxis = new List<ChartAxis>();
         protected int canvasWidth, canvasHeight, spaceBetween;
+        protected float axisPercentOnCanvas;
 
         protected void MathChartAxis(ChartSetting chartSetting, int canvasHeight)
         {
-            float height = SetChartHeight(canvasHeight);
+            float height = SetChartHeight(canvasHeight, axisPercentOnCanvas);
             int row = chartSetting.valuesRangeInScale;
             int value = chartSetting.maxInScale;
             while (row >= 0)
@@ -73,15 +74,15 @@ namespace MeteoCharts.Charts
             chartSetting.max = max;
 
             chartSetting.setInScale(min, max);
-            chartSetting.heightOfAxis = SetChartHeight(canvasHeight);
+            chartSetting.heightOfAxis = SetChartHeight(canvasHeight,axisPercentOnCanvas);
 
             chartSetting.oneInScale = chartSetting.heightOfAxis / chartSetting.valuesRangeInScale;
             return chartSetting;
         }
 
-        private float SetChartHeight(float height)
+        private float SetChartHeight(float height, float chartOccupyCanvas)
         {
-            return height * 0.75f;
+            return height * chartOccupyCanvas;
         }
         private float GetHeightOfValueInPixels(ChartSetting chartSett, ChartItem chartObj)
         {

@@ -29,6 +29,7 @@ namespace MeteoCharts.Charts
         {
             this.canvasHeight = canvasHeight;
             this.spaceBetween = spaceBetweenValues;
+            this.axisPercentOnCanvas = 0.75f;
             MathChart();
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {

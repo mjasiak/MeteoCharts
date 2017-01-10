@@ -24,6 +24,7 @@ namespace MeteoCharts.Charts
         {
             this.canvasHeight = canvasHeight;
             this.spaceBetween = spaceBetween;
+            this.axisPercentOnCanvas = 0.85f;
             MathChart();
             using (var surface = SKSurface.Create(canvasWidth, canvasHeight, SKColorType.Rgb565, SKAlphaType.Premul))
             {
@@ -80,12 +81,12 @@ namespace MeteoCharts.Charts
             foreach (var obj in _rainChartData.RainfallChartDataItems)
             {
                 int i = 1;
-                float heightControl = canvasHeight * 0.75f+20;
+                float heightControl = canvasHeight * axisPercentOnCanvas+20;
                 if (obj.chartValue > 0)
                 {
                     while(heightControl > obj.y)
                     {
-                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * 0.75f + 20-((squareHeight*squareSpacing)*i), spaceBetween - 5, squareHeight);
+                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * axisPercentOnCanvas + 20-((squareHeight*squareSpacing)*i), spaceBetween - 5, squareHeight);
                         path.AddRect(rect);
                         canvas.DrawPath(path, paint);
                         heightControl -= ((squareSpacing * squareHeight));
@@ -105,7 +106,7 @@ namespace MeteoCharts.Charts
                 if (obj.chartValue > 0)
                     for (int i = 1; i <= obj.chartValue; i++)
                     {
-                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * 0.75f + 20 - (i * 7), spaceBetween - 5, 4.0f);
+                        var rect = SKRect.Create(obj.x - (spaceBetween / 2), (float)canvasHeight * axisPercentOnCanvas + 20 - (i * 7), spaceBetween - 5, 4.0f);
                         path.AddRect(rect);
                     };
                 canvas.DrawPath(path, paint);
